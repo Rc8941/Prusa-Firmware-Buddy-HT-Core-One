@@ -53,7 +53,7 @@ Here's a progress update on everything I've done so far and have planned, in a s
 
 🟦 Finalize the Arduino sketch if not already
 
-❌ [PEEK Mods / PEEKSA](https://github.com/Rc8941/Prusa-Firmware-Buddy-HT-Core-One/ht-c1/README.md#xy-stepper-motor-coldboxes-a-bunchhhh-of-aluminum-parts-etc-to-allow-chamber-temps-beyond-55c-beyond-100c-peek) (I'd never try it in person myself so I'd make it and release the concepts anyways due to costs). I'd love to try and make them, but if I *do* then they'll come quite a while later, after everything else is finished at the earliest. It would have the same QOL (Assembly guides, etc.) as the rest, however! **This is not included in the estimated completion time found above**
+❌ [PEEK Mods / PEEKSA](https://github.com/Rc8941/Prusa-Firmware-Buddy-HT-Core-One/tree/ht-c1?tab=readme-ov-file#xy-stepper-motor-coldboxes-a-bunchhhh-of-aluminum-parts-etc-to-allow-chamber-temps-beyond-55c-beyond-100c-peek) (I'd never try it in person myself so I'd make it and release the concepts anyways due to costs). I'd love to try and make them, but if I *do* then they'll come quite a while later, after everything else is finished at the earliest. It would have the same QOL (Assembly guides, etc.) as the rest, however! **This is not included in the estimated completion time found above**
 
 
 
