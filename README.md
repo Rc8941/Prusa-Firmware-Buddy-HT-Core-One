@@ -17,7 +17,9 @@ Here's a progress update on everything I've done so far and have planned, in a s
 
 ✅ Initial bill of materials and concepts for testing on my end (Not shared until proven functional, safe and reliable)
 
-🟨 Waiting on: Hotend parts to arrive. When they arrive, the blue parts below will be worked on and done shortly after (Updated throughout):
+🟨 Waiting on: Hotend parts to arrive. Estimated date: Wednesday or Thursday (7/16/2025 or 7/17/2025)!
+
+When they arrive, the blue parts below will be worked on and done shortly after (Updated throughout):
 
 🟦 Test the hotend installation process (Already checked via mockups, only have to verify the reliability of the steel zip ties)
 
