@@ -13,7 +13,7 @@ Estimated completion time: ***August 2nd***. Do not take this as the final time,
 
 For context: Everything like "Check (something)" will be updated with my findings in detail when done!
 
-Here's a progress update on everything I've done so far and have planned, in a sequential order (Last updated 7/13/2025 at around 12:20 AM / 00:20 EST):
+Here's a progress update on everything I've done so far and have planned, in a sequential order (Last updated 7/14/2025 at around 5:05 PM / 17:05 EST):
 
 ✅ Initial bill of materials and concepts for testing on my end (Not shared until proven functional, safe and reliable)
 
