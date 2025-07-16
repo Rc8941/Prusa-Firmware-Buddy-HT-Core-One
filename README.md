@@ -72,7 +72,7 @@ However: Accidental feature! If you use a 65w heater, you're unable to make it g
 
 # Core One HT (500c) Mod
 Are you interested in giving your Prusa Core One some or all of the following?:
-1. A hotend capable of sustaining 450c?
+1. A hotend capable of sustaining 450c for safety, and 500c with a different heater?
 2. A chamber that's thermally insulated for extra temp stability?
 3. A chamber with... TRUE ACTIVE HEATING?? No more 40-45c chamber temps throughout a print with a target of 55c (Bed 90c)! Only 55c here!
 4. Thanks to [metacollin](https://github.com/metacollin) and their [MK4/S 450c Mod](https://github.com/metacollin/Prusa-Firmware-Buddy/tree/mc_high_temp), full use of the Loveboard's 12-bit ADC to get ~0.2c resolution on a PT1000?
@@ -107,7 +107,7 @@ To give context, here's everything this mod will do for/to your printer, sorted 
 3. Upgrade the nozzle to an adapter+V6 setup: To my knowledge, no readily available, Nextruder-native nozzles are rated past 300c. The adapter's just a hunk of metal, and some V6s are definitely rated to and past what we need!
 4. Upgrade the aluminum heaterblock to a plated copper one because the temps soften the aluminum
 - The silicone sock can't take these temps! Let's not remove it and call it a day, though....
-5. Replace the silicone sock with cut exhaust wrap rated for ~760c, held in place by steel zip ties rated for about 1200c! Same function (Air blocking, insulation), way higher (~2.5x) temp rating!
+5. Replace the silicone sock with a yet-to-be-decided, non-fiberous material. If one exists that's rated for at least 500c, preferably 600c+. Worst case scenario? No sock!
 
 ## Internal chamber mod:
 1. Seal all the micro-gaps within the Core One's frame
