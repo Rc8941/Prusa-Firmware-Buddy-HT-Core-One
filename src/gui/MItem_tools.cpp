@@ -24,7 +24,6 @@
 #include "time_tools.hpp"
 #include "footer_eeprom.hpp"
 #include <version/version.hpp>
-#include "../../common/PersistentStorage.h"
 #include "sys.h"
 #include "w25x.h"
 #include <bootloader/bootloader.hpp>
@@ -123,15 +122,15 @@ MI_FILAMENT_SENSOR::MI_FILAMENT_SENSOR()
 }
 
 void MI_FILAMENT_SENSOR::update() {
-    set_index(config_store().fsensor_enabled.get());
+    SetIndex(config_store().fsensor_enabled.get());
 }
 
 void MI_FILAMENT_SENSOR::OnChange(size_t old_index) {
     // Enabling/disabling FS can generate gcodes (I'm looking at you, MMU!).
     // Fail the action if there's no space in the queue.
     if (!gui_check_space_in_gcode_queue_with_msg()) {
-        // set_index doesn't call OnChange
-        set_index(old_index);
+        // SetIndex doesn't call OnChange
+        SetIndex(old_index);
         return;
     }
 
@@ -140,7 +139,7 @@ void MI_FILAMENT_SENSOR::OnChange(size_t old_index) {
 
     if (index && !fss.gui_wait_for_init_with_msg()) {
         FSensors_instance().set_enabled_global(false);
-        set_index(old_index);
+        SetIndex(old_index);
     }
 
     // Signal to the parent to check for changed
@@ -411,6 +410,10 @@ MI_M600::MI_M600()
     : IWindowMenuItem(_(label), nullptr, is_enabled_t::yes, is_hidden_t::no) {
 }
 void MI_M600::click(IWindowMenu & /*window_menu*/) {
+    if (MsgBoxQuestion(_("Perform filament change now?"), Responses_YesNo) != Response::Yes) {
+        return;
+    }
+
     if (!enqueued) {
         marlin_client::inject("M600");
         enqueued = true;
@@ -471,7 +474,7 @@ MI_SOUND_MODE::MI_SOUND_MODE()
 }
 
 void MI_SOUND_MODE::OnChange(size_t /*old_index*/) {
-    Sound_SetMode(static_cast<eSOUND_MODE>(get_index()));
+    Sound_SetMode(static_cast<eSOUND_MODE>(index));
 }
 
 /*****************************************************************************/
@@ -537,7 +540,7 @@ MI_TIMEZONE_MIN::MI_TIMEZONE_MIN()
 }
 
 void MI_TIMEZONE_MIN::OnChange([[maybe_unused]] size_t old_index) {
-    config_store().timezone_minutes.set(static_cast<time_tools::TimezoneOffsetMinutes>(get_index()));
+    config_store().timezone_minutes.set(static_cast<time_tools::TimezoneOffsetMinutes>(index));
 }
 
 /*****************************************************************************/
@@ -546,7 +549,7 @@ MI_TIMEZONE_SUMMER::MI_TIMEZONE_SUMMER()
     : WI_ICON_SWITCH_OFF_ON_t(static_cast<uint8_t>(config_store().timezone_summer.get()), _(label), nullptr, is_enabled_t::yes, is_hidden_t::no) {}
 
 void MI_TIMEZONE_SUMMER::OnChange([[maybe_unused]] size_t old_index) {
-    config_store().timezone_summer.set(static_cast<time_tools::TimezoneOffsetSummerTime>(get_index()));
+    config_store().timezone_summer.set(static_cast<time_tools::TimezoneOffsetSummerTime>(index));
 }
 
 /*****************************************************************************/
@@ -563,7 +566,7 @@ MI_TIME_FORMAT::MI_TIME_FORMAT()
 }
 
 void MI_TIME_FORMAT::OnChange([[maybe_unused]] size_t old_index) {
-    config_store().time_format.set(static_cast<time_tools::TimeFormat>(get_index()));
+    config_store().time_format.set(static_cast<time_tools::TimeFormat>(index));
 }
 
 /*****************************************************************************/
@@ -856,14 +859,14 @@ void MI_FOOTER_RESET::click([[maybe_unused]] IWindowMenu &window_menu) {
 
 static constexpr const char *heatup_bed_values[] = {
     N_("Nozzle"),
-    N_("Noz&Bed"),
+    N_("All"),
 };
 
-MI_HEATUP_BED::MI_HEATUP_BED()
-    : MenuItemSwitch(_("For Filament Change, Preheat"), heatup_bed_values, config_store().heatup_bed.get()) {
+MI_FILAMENT_CHANGE_PREHEAT_ALL::MI_FILAMENT_CHANGE_PREHEAT_ALL()
+    : MenuItemSwitch(_("For Filament Change, Preheat"), heatup_bed_values, config_store().filament_change_preheat_all.get()) {
 }
-void MI_HEATUP_BED::OnChange(size_t old_index) {
-    config_store().heatup_bed.set(!old_index);
+void MI_FILAMENT_CHANGE_PREHEAT_ALL::OnChange(size_t old_index) {
+    config_store().filament_change_preheat_all.set(!old_index);
 }
 
 MI_SET_READY::MI_SET_READY()
@@ -1093,7 +1096,7 @@ MI_DISPLAY_BAUDRATE::MI_DISPLAY_BAUDRATE()
 }
 
 void MI_DISPLAY_BAUDRATE::OnChange(size_t) {
-    config_store().reduce_display_baudrate.set(get_index());
+    config_store().reduce_display_baudrate.set(GetIndex());
 }
 #endif
 

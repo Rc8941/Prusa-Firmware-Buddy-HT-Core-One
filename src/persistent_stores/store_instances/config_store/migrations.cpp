@@ -2,6 +2,7 @@
 #include <common/utils/algorithm_extensions.hpp>
 #include <footer_def.hpp>
 #include <footer_eeprom.hpp>
+#include <config_store/defaults.hpp>
 
 namespace config_store_ns {
 namespace migrations {
@@ -226,6 +227,40 @@ namespace migrations {
         if (val.has_value()) {
             backend.save_migration_item<NewItem::value_type>(NewItem::hashed_id, *val);
         }
+    }
+#endif
+
+    void hotend_type(journal::Backend &backend) {
+        using NewItem = decltype(CurrentStore::hotend_type);
+        using OldItem = decltype(DeprecatedStore::hotend_type_single_hotend);
+
+        OldItem::value_type saved_hotend_type = defaults::hotend_type;
+
+        auto callback = [&](journal::Backend::ItemHeader header, std::array<uint8_t, journal::Backend::MAX_ITEM_SIZE> &buffer) -> void {
+            if (header.id == decltype(DeprecatedStore::hotend_type_single_hotend)::hashed_id) {
+                memcpy(&saved_hotend_type, buffer.data(), header.len);
+            }
+        };
+        backend.read_items_for_migrations(callback);
+
+        for (uint8_t i = 0; i < HOTENDS; i++) {
+            backend.save_migration_item<NewItem::value_type>(NewItem::hashed_id_first + i, saved_hotend_type);
+        }
+    }
+
+#if HAS_EMERGENCY_STOP()
+    void emergency_stop(journal::Backend &backend) {
+        using NewItem = decltype(CurrentStore::emergency_stop_enable);
+        using OldItem = decltype(DeprecatedStore::emergency_stop_enable);
+
+        OldItem::value_type saved_emergency_enable = NewItem::default_val;
+        auto callback = [&](journal::Backend::ItemHeader header, std::array<uint8_t, journal::Backend::MAX_ITEM_SIZE> &buffer) -> void {
+            if (header.id == OldItem::hashed_id) {
+                memcpy(&saved_emergency_enable, buffer.data(), header.len);
+            }
+        };
+        backend.read_items_for_migrations(callback);
+        backend.save_migration_item<NewItem::value_type>(NewItem::hashed_id, saved_emergency_enable);
     }
 #endif
 } // namespace migrations

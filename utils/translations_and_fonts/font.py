@@ -29,19 +29,23 @@ def char_to_int(char) -> int:
     return int.from_bytes(char_bytes, "little")
 
 
-# based on charset_option ("full" / "standard" / "digits") different paths will be used
+# based on charset_option ("full" / "latin" / "digits" / "latin_and_katakana" / "latin_and_cyrillic") different paths will be used
 def cmd_create_font_png(charset_option: str, required_chars_path: Path,
                         src_png_path: Path, src_png_jap_path: Path,
-                        char_width: int, char_height: int, ipp_path: Path,
-                        dst_png_path: Path):
+                        src_png_ukr_path: Path, char_width: int,
+                        char_height: int, ipp_path: Path, dst_png_path: Path):
     if not required_chars_path.exists():
         logger.error('no %s found', required_chars_path)
         return 1
     if not src_png_path.exists():
         logger.error('no %s found', src_png_path)
         return 1
-    if not src_png_jap_path.exists(
-    ):  # Katakana source png is mandatory for every font
+    if not src_png_jap_path.exists():
+        # Katakana source png is mandatory for every font
+        logger.error('no %s found', src_png_jap_path)
+        return 1
+    if not src_png_ukr_path.exists():
+        # Cyrillic source png is mandatory for every font
         logger.error('no %s found', src_png_jap_path)
         return 1
 
@@ -64,84 +68,102 @@ def cmd_create_font_png(charset_option: str, required_chars_path: Path,
 
     with Image.open(src_png_path.resolve()) as src_lat_png:
         with Image.open(src_png_jap_path.resolve()) as src_jap_png:
-            # Some font have no need for japanese at all, but I leave it here just in case its char set is changed and japanese characters are needed
-            # Each font have to have its own katakana alphabet anyway
-            src_lat_png_mode = src_lat_png.mode
-            src_jap_png_mode = src_jap_png.mode
-            if src_lat_png_mode != "RGB":
-                logger.error('LATIN: %s mode is %s instead of required RGB',
-                             src_png_path, src_lat_png_mode)
-            if src_jap_png_mode != "RGB":
-                logger.error('KATAKANA: %s mode is %s instead of required RGB',
-                             src_png_jap_path, src_jap_png_mode)
+            with Image.open(src_png_ukr_path.resolve()) as src_ukr_png:
 
-            num_of_rows = math.ceil(len(char_list) / chars_per_row)
-            output_image = Image.new(
-                src_lat_png_mode,
-                (chars_per_row * char_width, num_of_rows * char_height),
-                color="white")
+                # Some font have no need for japanese at all, but I leave it here just in case its char set is changed and japanese characters are needed
+                # Each font have to have its own katakana alphabet anyway
+                src_lat_png_mode = src_lat_png.mode
+                src_jap_png_mode = src_jap_png.mode
+                src_ukr_png_mode = src_ukr_png.mode
+                if src_lat_png_mode != "RGB":
+                    logger.error(
+                        'LATIN: %s mode is %s instead of required RGB',
+                        src_png_path, src_lat_png_mode)
+                if src_jap_png_mode != "RGB":
+                    logger.error(
+                        'KATAKANA: %s mode is %s instead of required RGB',
+                        src_png_jap_path, src_jap_png_mode)
+                if src_ukr_png_mode != "RGB":
+                    logger.error(
+                        'CYRILLIC: %s mode is %s instead of required RGB',
+                        src_png_ukr_path, src_ukr_png_mode)
 
-            print("IPP:", ipp_path)
+                num_of_rows = math.ceil(len(char_list) / chars_per_row)
+                output_image = Image.new(
+                    src_lat_png_mode,
+                    (chars_per_row * char_width, num_of_rows * char_height),
+                    color="white")
 
-            x = 0
-            y = 0
-            with open(str(ipp_path.resolve()), "w") as file:
-                for ch in char_list:
-                    # JAPANESE
-                    if (ord(ch) >= 0x30A0
-                            and ord(ch) <= 0x30FF) or ch == '、' or ch == '。':
-                        # SPECIAL CASES (comma and dot are appended to katakana fonts)
-                        if ch == '、' or ch == '。':
-                            # Hardcoded coordinates in our katakana font source png
-                            srcX = 0 if ch == '、' else 1
-                            srcY = 6
+                print("IPP:", ipp_path)
+
+                x = 0
+                y = 0
+                with open(str(ipp_path.resolve()), "w") as file:
+                    for ch in char_list:
+                        # CYRILLIC
+                        if ord(ch) >= 0x0400 and ord(ch) <= 0x04FF:
+                            cyrill_index = (ord(ch) - 0x0400)
+                            srcX = cyrill_index % chars_per_row
+                            srcY = cyrill_index // chars_per_row
+                            src_png = src_ukr_png
+
+                        # JAPANESE
+                        elif (ord(ch) >= 0x30A0
+                              and ord(ch) <= 0x30FF) or ch == '、' or ch == '。':
+                            # SPECIAL CASES (comma and dot are appended to katakana fonts)
+                            if ch == '、' or ch == '。':
+                                # Hardcoded coordinates in our katakana font source png
+                                srcX = 0 if ch == '、' else 1
+                                srcY = 6
+                            else:
+                                # KATAKANA
+                                katakana_index = (ord(ch) - 0x30A0)
+                                srcX = katakana_index % chars_per_row
+                                srcY = katakana_index // chars_per_row
+                            src_png = src_jap_png
+
                         else:
-                            # KATAKANA
-                            katakana_index = (ord(ch) - 0x30A0)
-                            srcX = katakana_index % chars_per_row
-                            srcY = katakana_index // chars_per_row
-                        src_png = src_jap_png
+                            char_int = char_to_int(ch)
+                            char_int -= 32  # this is where out standard ASCII bitmap starts
+                            srcX = char_int % chars_per_row
+                            srcY = char_int // chars_per_row
+                            src_png = src_lat_png
 
-                    else:
-                        char_int = char_to_int(ch)
-                        char_int -= 32  # this is where out standard ASCII bitmap starts
-                        srcX = char_int % chars_per_row
-                        srcY = char_int // chars_per_row
-                        src_png = src_lat_png
+                        x_max, y_max = src_png.size
+                        if (srcY + 1) * char_height > y_max or char_int < 0:
+                            # Unsupported character
+                            logger.error("Unsupported character found: \"%c\"",
+                                         ch)
+                            fail = True
+                            continue
 
-                    x_max, y_max = src_png.size
-                    if (srcY + 1) * char_height > y_max or char_int < 0:
-                        # Unsupported character
-                        logger.error("Unsupported character found: \"%c\"", ch)
-                        fail = True
-                        continue
+                        char_crop = src_png.crop(
+                            (srcX * char_width, srcY * char_height,
+                             (srcX + 1) * char_width,
+                             (srcY + 1) * char_height))
 
-                    char_crop = src_png.crop(
-                        (srcX * char_width, srcY * char_height,
-                         (srcX + 1) * char_width, (srcY + 1) * char_height))
+                        # Append character to our font png
+                        output_image.paste(char_crop,
+                                           (x * char_width, y * char_height,
+                                            (x + 1) * char_width,
+                                            (y + 1) * char_height))
 
-                    # Append character to our font png
-                    output_image.paste(char_crop,
-                                       (x * char_width, y * char_height,
-                                        (x + 1) * char_width,
-                                        (y + 1) * char_height))
+                        # Write index
+                        file.write("{},\n".format(hex(char_to_int(ch))))
 
-                    # Write index
-                    file.write("{},\n".format(hex(char_to_int(ch))))
+                        x += 1
+                        if (x >= chars_per_row):
+                            x = 0
+                            y += 1
+                if fail:
+                    logger.error(
+                        "Remove / Replace the unsupported characters in PO files, rerun \"new_translations.sh\" and regenerate fonts again"
+                    )
+                    return 1
 
-                    x += 1
-                    if (x >= chars_per_row):
-                        x = 0
-                        y += 1
-            if fail:
-                logger.error(
-                    "Remove / Replace the unsupported characters in PO files, rerun \"new_translations.sh\" and regenerate fonts again"
-                )
-                return 1
-
-            image = remove_red_dots(np.array(output_image, dtype=np.uint8))
-            output_image = Image.fromarray(image, "RGB")
-            output_image.save(dst_png_path.resolve())
+                image = remove_red_dots(np.array(output_image, dtype=np.uint8))
+                output_image = Image.fromarray(image, "RGB")
+                output_image.save(dst_png_path.resolve())
 
 
 def main():
@@ -149,6 +171,7 @@ def main():
     parser.add_argument('--verbose', '-v', action='count', default=0)
     parser.add_argument('src_png', metavar='src_png', type=Path)
     parser.add_argument('src_png_jap', metavar='src_png_jap', type=Path)
+    parser.add_argument('src_png_ukr', metavar='src_png_ukr', type=Path)
     parser.add_argument('charset_option', metavar='charset_option', type=str)
     parser.add_argument('required_chars_path',
                         metavar='required_chars_path',
@@ -163,8 +186,8 @@ def main():
                         level=logging.WARNING - args.verbose * 10)
     retval = cmd_create_font_png(args.charset_option, args.required_chars_path,
                                  args.src_png, args.src_png_jap,
-                                 args.char_width, args.char_height,
-                                 args.ipp_path, args.dst_png)
+                                 args.src_png_ukr, args.char_width,
+                                 args.char_height, args.ipp_path, args.dst_png)
     sys.exit(retval if retval is not None else 0)
 
 

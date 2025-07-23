@@ -2,7 +2,7 @@
 
 export_path=$1
 lang_source_folder="src/lang/po"
-lang_codes=("cs" "de" "es" "fr" "it" "ja" "pl")
+lang_codes=("cs" "de" "es" "fr" "it" "ja" "pl" "uk")
 work_dir="./tmp_translations"
 remove_tmp_dir=0
 fail=0
@@ -43,6 +43,7 @@ remove_unused_strings() {
         po_filepath="${work_dir}/Prusa-Firmware-Buddy_${code}.po"
         msgattrib --set-obsolete --ignore-file=${lang_source_folder}/Prusa-Firmware-Buddy.pot -o ${po_filepath} ${po_filepath}
         msgattrib --no-obsolete -o ${po_filepath} ${po_filepath}
+        msgmerge --sort-output -o ${po_filepath} ${po_filepath} ${lang_source_folder}/Prusa-Firmware-Buddy.pot
     done
 }
 

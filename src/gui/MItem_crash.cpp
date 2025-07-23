@@ -28,8 +28,9 @@ void MI_CRASH_DETECTION::Loop() {
     // invalidation to reduce calls to config_store, as Print() happens and resets the state before
     // we can trap it here. At the same time, Print is not virtual.
     const bool phstep_enabled = config_store().get_phase_stepping_enabled();
-    set_enabled(phstep_enabled);
-    set_value(phstep_enabled && crash_s.is_enabled(), false);
+    // If phase stepping is enabled, we can't enable crash detection and vice versa
+    set_enabled(!phstep_enabled);
+    set_value(!phstep_enabled && crash_s.is_enabled(), false);
     #endif
     return WI_ICON_SWITCH_OFF_ON_t::Loop();
 }
@@ -81,7 +82,7 @@ MI_CRASH_SENSITIVITY_XY::MI_CRASH_SENSITIVITY_XY()
     : MenuItemSwitch(_(label), crash_sensitivity_items, stdext::index_of(crash_sensitivity_item_values, crash_s.get_sensitivity().x)) {}
 
 void MI_CRASH_SENSITIVITY_XY::OnChange([[maybe_unused]] size_t old_index) {
-    const int32_t sensitivity = crash_sensitivity_item_values[this->get_index()];
+    const int32_t sensitivity = crash_sensitivity_item_values[index];
     crash_s.set_sensitivity({ .x = sensitivity, .y = sensitivity });
 }
     #else

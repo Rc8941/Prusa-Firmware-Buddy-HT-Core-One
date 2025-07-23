@@ -174,6 +174,12 @@ public:
     inline bool FindaPressed() const {
         return regs8[0];
     }
+    inline uint8_t SelectorSlot() const {
+        return regs8[1];
+    }
+    inline uint8_t IdlerSlot() const {
+        return regs8[2];
+    }
 
     inline uint16_t FailStatistics() const {
         return regs16[0];
@@ -189,6 +195,10 @@ public:
 
     inline uint8_t MmuFwVersionRevision() const {
         return mmuFwVersion[2];
+    }
+
+    inline uint16_t BowdenLength() const {
+        return regs16[2];
     }
 
     /// Current number of retry attempts left
@@ -406,10 +416,10 @@ private:
     uint8_t regs8[regs8Count] = { 0, 0, 0 };
 
     // 16bit registers
-    static constexpr uint8_t regs16Count = 2;
+    static constexpr uint8_t regs16Count = 3;
     static_assert(regs16Count > 0); // code is not ready for empty lists of registers
     static const Register regs16Addrs[regs16Count] PROGMEM;
-    uint16_t regs16[regs16Count] = { 0, 0 };
+    uint16_t regs16[regs16Count] = { 0, 0, 360 };
 
     // 8bit init values to be sent to the MMU after line up
     static constexpr uint8_t initRegs8Count = 2;

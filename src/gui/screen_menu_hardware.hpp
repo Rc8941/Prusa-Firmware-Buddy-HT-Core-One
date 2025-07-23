@@ -71,6 +71,13 @@ using ScreenMenuHardware__ = ScreenMenu<GuiDefaults::MenuFooter,
     MI_STEEL_SHEETS,
 #endif
 
+// ================================
+// MMU related
+// ================================
+#if HAS_MMU2()
+    MI_HW_MMU,
+#endif
+
     // ================================
     // Other
     // ================================

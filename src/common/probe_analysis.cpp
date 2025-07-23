@@ -17,7 +17,7 @@ void ProbeAnalysisBase::StoreSample(float currentZ, float currentLoad) {
     if (analysisInProgress) {
         return;
     }
-    window.push_back({ ticks_us(), currentZ, currentLoad });
+    window.push_back({ currentZ, currentLoad });
 }
 
 ProbeAnalysisBase::Result ProbeAnalysisBase::Analyse() {
@@ -74,7 +74,7 @@ ProbeAnalysisBase::Result ProbeAnalysisBase::Analyse() {
         std::array<std::tuple<uint32_t, float>, 6> load_line_points;
 
         auto timestamp_for_time = [this](Time time) -> uint32_t {
-            return ClosestSample(time, SearchDirection::Both)->timestamp;
+            return TimeOfSample(ClosestSample(time, SearchDirection::Both));
         };
 
         // analysis start

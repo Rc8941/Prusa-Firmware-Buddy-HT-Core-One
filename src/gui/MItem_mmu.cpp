@@ -189,7 +189,7 @@ static bool flip_mmu_rework([[maybe_unused]] bool flip_mmu_at_the_end) {
 
     if (fsstate != FilamentSensorState::NotCalibrated && fsstate != FilamentSensorState::Disabled
         // Do not open selftest during ScreenPrinterSetup, it would screw things up (and the screen can be opened during the selftest)
-        && Screens::Access()->IsScreenOpened<ScreenPrinterSetup>() //
+        && !Screens::Access()->IsScreenOpened<ScreenPrinterSetup>() //
     ) {
         // opens the screen in advance before the screen will be opened by the selftest
         // this prevents the user to click something before the selftest screen would open
@@ -230,7 +230,7 @@ void MI_MMU_ENABLE::OnChange(size_t old_index) {
         // logical_sensors.extruder is not synchronized, but in this case it it OK
         if (!is_fsensor_working_state(FSensors_instance().sensor_state(LogicalFilamentSensor::extruder))) {
             MsgBoxWarning(_("Can't enable MMU: calibrate and enable the printer's filament sensor first."), Responses_Ok);
-            set_index(old_index);
+            SetIndex(old_index);
             return;
         }
 
@@ -288,15 +288,15 @@ MI_MMU_NEXTRUDER_REWORK::MI_MMU_NEXTRUDER_REWORK()
         config_store().is_mmu_rework.get()) {}
 
 void MI_MMU_NEXTRUDER_REWORK::OnChange([[maybe_unused]] size_t old_index) {
-    if (!flip_mmu_rework(get_index() == 0)) {
-        set_index(old_index); // revert the index change of the toggle in case the user aborted the dialog
+    if (!flip_mmu_rework(index == 0)) {
+        SetIndex(old_index); // revert the index change of the toggle in case the user aborted the dialog
         return;
     }
 
     // Enabling MMU rework hides the FS_Autoload option from the menu - BFW-4290
     // However the request was that the autoload "stays active"
     // So we have to make sure that it's on when you activate the rework
-    if (get_index()) {
+    if (index) {
         marlin_client::set_fs_autoload(true);
         config_store().fs_autoload_enabled.set(true);
     }

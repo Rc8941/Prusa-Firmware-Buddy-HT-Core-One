@@ -6,16 +6,21 @@
 #include "config.h"
 #include <guiconfig/guiconfig.h>
 #include <option/enable_translation_ja.h>
+#include <option/enable_translation_uk.h>
 
 #if HAS_MINI_DISPLAY()
     #if ENABLE_TRANSLATION_JA()
-        #include "res/cc/font_regular_7x13_full.hpp" //Font::small
-        #include "res/cc/font_regular_11x18_full.hpp" //Font::normal
-        #include "res/cc/font_regular_9x16_full.hpp" //Font::special
+        #include "res/cc/font_regular_7x13_latin_and_katakana.hpp" //Font::small
+        #include "res/cc/font_regular_11x18_latin_and_katakana.hpp" //Font::normal
+        #include "res/cc/font_regular_9x16_latin_and_katakana.hpp" //Font::special
+    #elif ENABLE_TRANSLATION_UK()
+        #include "res/cc/font_regular_7x13_latin_and_cyrillic.hpp" //Font::small
+        #include "res/cc/font_regular_11x18_latin_and_cyrillic.hpp" //Font::normal
+        #include "res/cc/font_regular_9x16_latin_and_cyrillic.hpp" //Font::special
     #else
-        #include "res/cc/font_regular_7x13_standard.hpp" //Font::small
-        #include "res/cc/font_regular_11x18_standard.hpp" //Font::normal
-        #include "res/cc/font_regular_9x16_standard.hpp" //Font::special
+        #include "res/cc/font_regular_7x13_latin.hpp" //Font::small
+        #include "res/cc/font_regular_11x18_latin.hpp" //Font::normal
+        #include "res/cc/font_regular_9x16_latin.hpp" //Font::special
     #endif
 #endif
 #if HAS_LARGE_DISPLAY()

@@ -21,8 +21,16 @@ static constexpr const uint16_t font_full_char_indices[] = {
 #include "../guiapi/include/fnt-full-indices.ipp"
 };
 
-static constexpr const uint16_t font_standard_char_indices[] = {
-#include "../guiapi/include/fnt-standard-indices.ipp"
+static constexpr const uint16_t font_latin_char_indices[] = {
+#include "../guiapi/include/fnt-latin-indices.ipp"
+};
+
+static constexpr const uint16_t font_latin_and_katakana_char_indices[] = {
+#include "../guiapi/include/fnt-latin-and-katakana-indices.ipp"
+};
+
+static constexpr const uint16_t font_latin_and_cyrillic_char_indices[] = {
+#include "../guiapi/include/fnt-latin-and-cyrillic-indices.ipp"
 };
 
 static constexpr const uint16_t font_digits_char_indices[] = {
@@ -30,7 +38,7 @@ static constexpr const uint16_t font_digits_char_indices[] = {
 };
 
 bool hasASCII(FontCharacterSet charset_option) {
-    return charset_option == FontCharacterSet::full || charset_option == FontCharacterSet::standard;
+    return charset_option == FontCharacterSet::full || charset_option == FontCharacterSet::latin || charset_option == FontCharacterSet::latin_and_katakana || charset_option == FontCharacterSet::latin_and_cyrillic;
 }
 
 uint32_t get_char_position_in_font(unichar c, const font_t *pf) {
@@ -53,9 +61,17 @@ uint32_t get_char_position_in_font(unichar c, const font_t *pf) {
         first = std::begin(font_full_char_indices);
         last = std::end(font_full_char_indices);
         break;
-    case FontCharacterSet::standard:
-        first = std::begin(font_standard_char_indices);
-        last = std::end(font_standard_char_indices);
+    case FontCharacterSet::latin:
+        first = std::begin(font_latin_char_indices);
+        last = std::end(font_latin_char_indices);
+        break;
+    case FontCharacterSet::latin_and_katakana:
+        first = std::begin(font_latin_and_katakana_char_indices);
+        last = std::end(font_latin_and_katakana_char_indices);
+        break;
+    case FontCharacterSet::latin_and_cyrillic:
+        first = std::begin(font_latin_and_cyrillic_char_indices);
+        last = std::end(font_latin_and_cyrillic_char_indices);
         break;
     case FontCharacterSet::digits:
         first = std::begin(font_digits_char_indices);

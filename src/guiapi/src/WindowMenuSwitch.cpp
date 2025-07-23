@@ -2,7 +2,7 @@
 
 MenuItemSwitch::MenuItemSwitch(const string_view_utf8 &label, const std::span<const char *const> &items, size_t initial_index)
     : IWindowMenuItem(label)
-    , index_(initial_index)
+    , index(initial_index)
     , items_(items) //
 {
     touch_extension_only_ = true;
@@ -11,25 +11,25 @@ MenuItemSwitch::MenuItemSwitch(const string_view_utf8 &label, const std::span<co
 }
 
 invalidate_t MenuItemSwitch::change(int /*dif*/) {
-    if ((++index_) >= item_count()) {
-        index_ = 0;
+    if ((++index) >= item_count()) {
+        index = 0;
     }
     return invalidate_t::yes;
 }
 
 void MenuItemSwitch::click(IWindowMenu & /*window_menu*/) {
-    const size_t old_index = index_;
+    const size_t old_index = index;
     Change(0);
     OnChange(old_index);
     changeExtentionWidth();
 }
 
 void MenuItemSwitch::set_index(size_t idx) {
-    if (idx == index_ || idx >= item_count()) {
+    if (idx == index || idx >= item_count()) {
         return;
     }
 
-    index_ = idx;
+    index = idx;
     changeExtentionWidth();
     InValidateExtension();
 }
@@ -89,6 +89,6 @@ void MenuItemSwitch::changeExtentionWidth() {
 }
 
 string_view_utf8 MenuItemSwitch::current_item_text() const {
-    const char *str = items_[index_];
+    const char *str = items_[index];
     return translate_items_ ? _(str) : string_view_utf8::MakeRAM(str);
 }

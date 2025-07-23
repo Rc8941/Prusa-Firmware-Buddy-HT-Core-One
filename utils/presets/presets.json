@@ -103,12 +103,34 @@
             }
         },
         {
+            "name": "mini-en-uk",
+            "description": "Original Prusa MINI (EN & UK translation)",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "PRINTER": "MINI",
+                "BOARD": "BUDDY",
+                "BOARD_VERSION": "1.0.0",
+                "DEVELOPMENT_ITEMS_ENABLED": true,
+                "TRANSLATIONS_LIST": "uk"
+            }
+        },
+        {
             "name": "mk4",
             "description": "Original Prusa MK4 with xBuddy 0.2.7c or newer fw compatible, 400-step motors and planetary gearbox",
             "cacheVariables": {
                 "PRINTER": "MK4",
                 "BOARD": "XBUDDY",
                 "BOARD_VERSION": "0.2.7"
+            }
+        },
+        {
+            "name": "mk4-burst",
+            "description": "Original Prusa MK4 with xBuddy 0.2.7c or newer fw compatible, 400-step motors and planetary gearbox",
+            "cacheVariables": {
+                "PRINTER": "MK4",
+                "BOARD": "XBUDDY",
+                "BOARD_VERSION": "0.2.7",
+                "ENABLE_BURST":true
             }
         },
         {

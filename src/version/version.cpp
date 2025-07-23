@@ -9,6 +9,7 @@
 #include <option/enable_translation_it.h>
 #include <option/enable_translation_ja.h>
 #include <option/enable_translation_pl.h>
+#include <option/enable_translation_uk.h>
 #include <printers.h>
 
 #define _STR(x) #x
@@ -57,6 +58,7 @@ const BuildIdentification project_build_identification {
         | ENABLE_TRANSLATION_IT() << 4
         | ENABLE_TRANSLATION_PL() << 5
         | ENABLE_TRANSLATION_JA() << 6
+        | ENABLE_TRANSLATION_UK() << 7
         //
         ),
     .printer_code = PRINTER_CODE,

@@ -91,6 +91,9 @@
   #include "../libs/buzzer.h"
 #endif
 
+#include <option/has_dwarf.h>
+#include <option/has_modularbed.h>
+
 #if HOTEND_USES_THERMISTOR
   #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
     static void* heater_ttbl_map[2] = { (void*)HEATER_0_TEMPTABLE, (void*)HEATER_1_TEMPTABLE };
@@ -868,7 +871,10 @@ void Temperature::_temp_error(const heater_ind_t heater, PGM_P const serial_msg,
     SERIAL_EOL();
   }
 
-  disable_all_heaters(); // always disable (even for bogus temp)
+  // Disable only the local heaters. We are in ISR, so we can't afford any kind
+  // of interprocessor communication and it would not finish anyway before we
+  // kill it.
+  disable_local_heaters(); // always disable (even for bogus temp)
 
   #if BOGUS_TEMPERATURE_GRACE_PERIOD
     const millis_t ms = millis();
@@ -2763,6 +2769,18 @@ void Temperature::disable_all_heaters() {
 void Temperature::disable_hotend() {
     disable_heaters(disable_bed_t::no);
 
+}
+
+void Temperature::disable_local_heaters() {
+#if HAS_DWARF() && HAS_MODULARBED()
+    // No local heater present
+#elif !HAS_DWARF() && HAS_MODULARBED()
+    disable_hotend();
+#elif !HAS_DWARF() && !HAS_MODULARBED()
+    disable_all_heaters();
+#else
+#error "Don't know how to disable the bed but not dwarf"
+#endif
 }
 
 void Temperature::disable_heaters(Temperature::disable_bed_t disable_bed) {

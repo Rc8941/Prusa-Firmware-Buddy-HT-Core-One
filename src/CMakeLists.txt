@@ -1,3 +1,6 @@
+# Modules are nice, so we can include them everywhere
+add_subdirectory(module)
+
 if(BOARD IN_LIST BUDDY_BOARDS)
   target_include_directories(firmware PRIVATE .)
 
@@ -16,6 +19,10 @@ if(BOARD IN_LIST BUDDY_BOARDS)
   add_subdirectory(freertos)
   add_subdirectory(persistent_stores)
   add_subdirectory(version)
+
+  if(HEAP_INSTRUMENTATION_ENABLED)
+    add_subdirectory(heap_instrumentation)
+  endif()
 
   if(CONNECT OR WUI)
     add_subdirectory(transfers)
@@ -91,6 +98,7 @@ elseif(BOARD STREQUAL "XBUDDY_EXTENSION")
   add_subdirectory(freertos)
   add_subdirectory(puppy/xbuddy_extension_shared)
   add_subdirectory(puppy/xbuddy_extension)
+
 elseif(BOARD STREQUAL "XL_DEV_KIT_XLB")
   target_include_directories(firmware PRIVATE .)
 

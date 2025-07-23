@@ -724,8 +724,6 @@ TEST_CASE("StringBuilder", "[strbuilder]") {
                 }
 
                 CHECK(b.is_problem());
-                CHECK_THAT(b.str_nocheck(), Equals("abc"));
-                CHECK(b.char_count() == 3);
             }
 
             {
@@ -734,6 +732,24 @@ TEST_CASE("StringBuilder", "[strbuilder]") {
             }
 
         } while (std::next_permutation(overfill_order.begin(), overfill_order.end()));
+    }
+
+    SECTION("printf cropping") {
+        ArrayStringBuilder<8> b;
+        b.append_printf("123456%i", 56);
+        CHECK(b.is_problem());
+        CHECK_THAT(b.str_nocheck(), Equals("1234565"));
+    }
+
+    SECTION("append_std_string_view cropping") {
+        ArrayStringBuilder<8> b;
+        b.append_std_string_view("1234");
+        CHECK(b.is_ok());
+        CHECK_THAT(b.str_nocheck(), Equals("1234"));
+
+        b.append_std_string_view("56789");
+        CHECK(b.is_problem());
+        CHECK_THAT(b.str_nocheck(), Equals("1234567"));
     }
 
     SECTION("append_float") {

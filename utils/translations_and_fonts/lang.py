@@ -227,59 +227,39 @@ def cmd_generate_hash_tables(args):
         dump_hash_table(langcode, entries, hash_table, args.output_dir)
 
 
-def cmd_generate_required_chars(args):
-    """Entrypoint of the generate-required-chars subcommand."""
-    translations = load_translations(args.input_dir)
-    if not translations:
-        logger.error('no translations found')
-        return 1
+# Usage in a condition
+def is_cyrillic_char(char):
+    return char >= 0x0400 and char <= 0x04FF
 
-    required_chars = set(
-        ch for translation in translations.values() for entry in translation
-        for ch in entry.msgstr
-        if ((ord(ch) > 127 and ord(ch) <= 0x30A0) or ord(ch) > 0x30FF)
-        and ord(ch) != 0x3001
-        and ord(ch) != 0x3002)  # without katakana and japanese , and .
 
-    # All fonts have to have '?'
-    required_chars.add('?')
+def generate_cyrillic_standard_chars():
+    yield 0x0404
+    yield 0x0406
+    yield 0x0407
 
-    # characters contained in language names; not contained in *.po files
-    required_chars.add('Č')
-    required_chars.add('š')
-    required_chars.add('ñ')
-    required_chars.add('ç')
+    for code in range(0x0410, 0x042A):  # 0x0429 inclusive
+        yield code
 
-    # Add all standard ASCII characters (32 - 127)
-    # We need nearly all of them and it speeds up character draw process (no lower_bound to find the character index)
-    for ch in range(0x20, 0x7F):  # 0x7F is DEL (not used)
-        required_chars.add(chr(ch))
+    yield 0x042C
 
-    required_chars = sorted(required_chars)
-    open(args.output_dir / 'standard-chars.txt', 'w',
-         encoding='utf-8').write(' '.join(required_chars))
+    for code in range(0x042E, 0x044A):  # 0x0449 inclusive
+        yield code
 
-    required_chars = set(required_chars)
+    for code in range(0x044C, 0x0450):  # 0x044F inclusive
+        yield code
 
-    # characters contained in language name are not contained in *.po files:
-    # "Japanese" == ニホンゴ <- these have to be added separately because language name is not translated
-    required_chars.add('ニ')
-    required_chars.add('ホ')
-    required_chars.add('ン')
-    required_chars.add('ゴ')
+    yield 0x0456
+    yield 0x0457
+    yield 0x0490
+    yield 0x0491
 
-    # Add all characters of katakana (testing)
-    for ch in range(0x30A1, 0x30FF + 1):  # Add katakana alphabet for japanese
-        required_chars.add(chr(ch))
-    required_chars.add('、')
-    required_chars.add('。')
 
-    required_chars = sorted(required_chars)
-    open(args.output_dir / 'full-chars.txt', 'w',
-         encoding='utf-8').write(' '.join(required_chars))
-    # open(args.output_dir / 'required-chars.raw',
-    #     'bw').write(''.join(required_chars).encode('utf-32-le'))
+def is_japanese_char(char):
+    return (char <= 0x30FF
+            and char >= 0x30A0) or char == 0x3001 or char == 0x3002
 
+
+def generate_required_digit_chars():
     # Reduced character set for font LARGE
     digits_chars = set([
         "0",
@@ -299,9 +279,130 @@ def cmd_generate_required_chars(args):
         "-",
         ",",
     ])
-    digits_chars = sorted(digits_chars)
+    return digits_chars
+
+
+def generate_required_latin_chars(translations):
+    # standard latin is range(0x20, 0x7F)
+    required_chars_latin = set(
+        ch for translation in translations.values() for entry in translation
+        for ch in entry.msgstr
+        if not is_japanese_char(ord(ch)) and not is_cyrillic_char(ord(ch)))
+
+    # All fonts have to have '?'
+    required_chars_latin.add('?')
+    # characters contained in language names; not contained in *.po files
+    required_chars_latin.add('Č')
+    required_chars_latin.add('š')
+    required_chars_latin.add('ñ')
+    required_chars_latin.add('ç')
+
+    # Include all standard latin characters (file names may include characters that are not in translations)
+    for ch in range(0x20, 0x7F):
+        required_chars_latin.add(chr(ch))
+
+    return required_chars_latin
+
+
+def generate_required_latin_and_katakana_chars(translations):
+    # katakana is range(0x30A1, 0x30FF + 1)
+    required_chars_latin_and_katakana = set(
+        ch for translation in translations.values() for entry in translation
+        for ch in entry.msgstr if not is_cyrillic_char(ord(ch)))
+
+    # All fonts have to have '?'
+    required_chars_latin_and_katakana.add('?')
+    # characters contained in language name are not contained in *.po files:
+    # "Japanese" == ニホンゴ <- these have to be added separately because language name is not translated
+    required_chars_latin_and_katakana.add('ニ')
+    required_chars_latin_and_katakana.add('ホ')
+    required_chars_latin_and_katakana.add('ン')
+    required_chars_latin_and_katakana.add('ゴ')
+    required_chars_latin_and_katakana.add('、')
+    required_chars_latin_and_katakana.add('。')
+
+    # Include all katakana characters (file names may include characters that are not in translations)
+    for ch in range(0x30A1, 0x30FF + 1):
+        required_chars_latin_and_katakana.add(chr(ch))
+
+    return required_chars_latin_and_katakana
+
+
+def generate_required_latin_and_cyrillic_chars(translations):
+    # cyrillic is range(0x0400, 0x04FF + 1)
+    required_chars_latin_and_cyrillic = set(
+        ch for translation in translations.values() for entry in translation
+        for ch in entry.msgstr if not is_japanese_char(ord(ch)))
+
+    # All fonts have to have '?'
+    required_chars_latin_and_cyrillic.add('?')
+    # Add "Ukrainian" because it's not in .po files
+    required_chars_latin_and_cyrillic.add('У')
+    required_chars_latin_and_cyrillic.add('к')
+    required_chars_latin_and_cyrillic.add('р')
+    required_chars_latin_and_cyrillic.add('а')
+    required_chars_latin_and_cyrillic.add('ї')
+    required_chars_latin_and_cyrillic.add('н')
+    required_chars_latin_and_cyrillic.add('с')
+    required_chars_latin_and_cyrillic.add('ь')
+    required_chars_latin_and_cyrillic.add('м')
+    required_chars_latin_and_cyrillic.add('о')
+    required_chars_latin_and_cyrillic.add('в')
+    required_chars_latin_and_cyrillic.add('ґ')
+    required_chars_latin_and_cyrillic.add('Ґ')
+
+    # Include ukrainian standard characters (file names may include characters that are not in translations)
+    for ch in generate_cyrillic_standard_chars():
+        required_chars_latin_and_cyrillic.add(chr(ch))
+
+    return required_chars_latin_and_cyrillic
+
+
+def cmd_generate_required_chars(args):
+    """Entrypoint of the generate-required-chars subcommand."""
+    translations = load_translations(args.input_dir)
+    if not translations:
+        logger.error('no translations found')
+        return 1
+
+    # Generate DIGITS
+    digits = generate_required_digit_chars()
+    digits_list = sorted(digits)
     open(args.output_dir / 'digits-chars.txt', 'w',
-         encoding='utf-8').write(' '.join(digits_chars))
+         encoding='utf-8').write(' '.join(digits_list))
+
+    # Generate LATIN
+    latin = generate_required_latin_chars(translations)
+    latin_list = sorted(latin)
+    open(args.output_dir / 'latin-chars.txt', 'w',
+         encoding='utf-8').write(' '.join(latin_list))
+
+    # Generate LATIN+KATAKANA
+    latin_and_katakana = generate_required_latin_and_katakana_chars(
+        translations)
+    latin_and_katakana_list = sorted(latin_and_katakana)
+    open(args.output_dir / 'latin-and-katakana-chars.txt',
+         'w',
+         encoding='utf-8').write(' '.join(latin_and_katakana_list))
+
+    # Generate LATIN+CYRILLIC
+    latin_and_cyrillic = generate_required_latin_and_cyrillic_chars(
+        translations)
+    latin_and_cyrillic_list = sorted(latin_and_cyrillic)
+    open(args.output_dir / 'latin-and-cyrillic-chars.txt',
+         'w',
+         encoding='utf-8').write(' '.join(latin_and_cyrillic_list))
+
+    # Generate FULL FONT (all combined)
+    full_font = set()
+    full_font.update(digits)
+    full_font.update(latin)
+    full_font.update(latin_and_katakana)
+    full_font.update(latin_and_cyrillic)
+
+    full_font_list = sorted(full_font)
+    open(args.output_dir / 'full-chars.txt', 'w',
+         encoding='utf-8').write(' '.join(full_font_list))
 
 
 def cmd_dump_pofiles(args):

@@ -202,10 +202,6 @@ void app_run(void) {
     app_setup();
     marlin_server::init();
 
-#if HAS_ADVANCED_POWER()
-    advancedpower.ResetOvercurrentFault();
-#endif
-
     TaskDeps::provide(TaskDeps::Dependency::default_task_ready);
 
     while (1) {

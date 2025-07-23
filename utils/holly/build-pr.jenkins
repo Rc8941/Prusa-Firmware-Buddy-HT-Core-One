@@ -144,6 +144,7 @@ pipeline {
                             'mini-en-it,release,yesboot',
                             'mini-en-ja,release,yesboot',
                             'mini-en-pl,release,yesboot',
+                            'mini-en-uk,release,yesboot',
                             'mk3.5,release,yesboot',
                             'mk4,release,yesboot',
                             'mk4,release,noboot', // Needed for integration tests, please don't delete
@@ -275,6 +276,30 @@ pipeline {
                         export PYTHONPATH="\$PYTHONPATH:\$MST_INSTALL_PATH"
                         pytest \$PWD/src/common/marlin_server_types/python_binding/tests/
                         """
+                    }
+                }
+
+                stage('Pre-release checks') {
+                    agent {
+                        dockerfile {
+                            label 'docker-v2'
+                            filename 'utils/holly/Dockerfile'
+                            additionalBuildArgs '-t prusa-firmware-buddy'
+                        }
+                    }
+                    steps {
+                        sh """
+                        ln -fs /work/.dependencies
+                        ln -fs /work/.venv
+                        . .venv/bin/activate
+                        utils/generate-error-codes-report.py | tee error-codes-report.txt
+                        utils/translations_and_fonts/generate-translations-report.sh | tee translations-report.txt
+                        """
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: 'error-codes-report.txt, translations-report.txt, Prusa-Firmware-Buddy.pot'
+                        }
                     }
                 }
             }

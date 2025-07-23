@@ -10,7 +10,7 @@
 static_assert(HAS_LOCAL_ACCELEROMETER() || HAS_REMOTE_ACCELEROMETER());
 
 #if HAS_LOCAL_ACCELEROMETER()
-    #include "SparkFunLIS2DH.h"
+    #include <hwio_pindef.h>
 #elif HAS_REMOTE_ACCELEROMETER()
     #include <freertos/mutex.hpp>
     #include <common/circular_buffer.hpp>
@@ -25,13 +25,13 @@ static_assert(HAS_LOCAL_ACCELEROMETER() || HAS_REMOTE_ACCELEROMETER());
  */
 class PrusaAccelerometer {
 public:
-#if HAS_LOCAL_ACCELEROMETER()
-    using Acceleration = Fifo::Acceleration;
-#else
     struct Acceleration {
         float val[3];
     };
-#endif
+
+    struct RawAcceleration {
+        int16_t val[3];
+    };
 
     enum class Error {
         none,
@@ -64,17 +64,37 @@ public:
         error,
     };
 
-    /// Obtains one sample from the buffer and puts it to \param acceleration (if the results is ok).
-    GetSampleResult get_sample(Acceleration &acceleration);
+    /// Convert raw sample to physical acceleration.
+    constexpr static float raw_to_accel(int16_t raw) {
+        constexpr float standard_gravity = 9.80665f;
+        constexpr int16_t max_value = 0b0111'1111'1111'1111;
+        constexpr float factor2g = 2.f * standard_gravity / max_value;
+        return raw * factor2g;
+    }
 
-    float get_sampling_rate() const { return m_sampling_rate; }
+    /// Obtains one sample from the buffer and puts it to \param raw_acceleration (if the results is ok).
+    GetSampleResult get_sample(RawAcceleration &raw_acceleration);
+
+    /// Obtains one sample from the buffer and puts it to \param acceleration (if the results is ok).
+    GetSampleResult get_sample(Acceleration &acceleration) {
+        RawAcceleration raw_acceleration;
+        const GetSampleResult result = get_sample(raw_acceleration);
+        if (result == GetSampleResult::ok) {
+            acceleration.val[0] = raw_to_accel(raw_acceleration.val[0]);
+            acceleration.val[1] = raw_to_accel(raw_acceleration.val[1]);
+            acceleration.val[2] = raw_to_accel(raw_acceleration.val[2]);
+        }
+        return result;
+    }
+
+    float get_sampling_rate() const;
     /**
      * @brief Get error
      *
      * Check after PrusaAccelerometer construction.
      * Check after measurement to see if it was valid.
      */
-    Error get_error() const { return m_sample_buffer.error.get(); }
+    Error get_error() const;
 
     /// \returns string describing the error or \p nullptr
     const char *error_str() const;
@@ -137,17 +157,9 @@ private:
     };
 
     void set_enabled(bool enable);
-#if HAS_LOCAL_ACCELEROMETER()
-    struct SampleBuffer {
-        Fifo buffer;
-        ErrorImpl error;
-    };
-    SampleBuffer m_sample_buffer;
-    #if PRINTER_IS_PRUSA_MK3_5()
+#if HAS_LOCAL_ACCELEROMETER() && PRINTER_IS_PRUSA_MK3_5()
     buddy::hw::OutputEnabler output_enabler;
     buddy::hw::OutputPin output_pin;
-    #endif
-    LIS2DH accelerometer;
 #elif HAS_REMOTE_ACCELEROMETER()
     // Mutex is very RAM (80B) consuming for this fast operation, consider switching to critical section
     static freertos::Mutex s_buffer_mutex;
@@ -157,6 +169,6 @@ private:
     };
     static SampleBuffer *s_sample_buffer;
     SampleBuffer m_sample_buffer;
-#endif
     static float m_sampling_rate;
+#endif
 };

@@ -1,5 +1,7 @@
 target_include_directories(firmware PRIVATE . include)
 
+target_link_libraries(firmware PRIVATE buddy_utils)
+
 if(BOARD IN_LIST BUDDY_BOARDS)
   target_sources(
     firmware
@@ -47,13 +49,13 @@ if(BOARD IN_LIST BUDDY_BOARDS)
             odometer.cpp
             otp.cpp
             path_utils.cpp
-            PersistentStorage.cpp
             Pin.cpp
             ping_manager.cpp
             print_utils.cpp
             printer_model.cpp
             probe_analysis.cpp
             random_hw.cpp
+            ring_allocator.cpp
             rw_mutex.cpp
             safe_state.cpp
             segmented_json.cpp
@@ -226,6 +228,10 @@ endif()
 if(BOARD_IS_MASTER_BOARD)
   add_subdirectory(gcode)
   add_subdirectory(feature)
+endif()
+
+if(HAS_PRECISE_HOMING)
+  target_sources(firmware PRIVATE PersistentStorage.cpp)
 endif()
 
 add_subdirectory(utils)
