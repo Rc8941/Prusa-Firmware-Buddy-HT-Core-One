@@ -17,43 +17,47 @@ Estimated completion time: ***August 2nd***. Do not take this as the final time,
 
 For context: Everything like "Check (something)" will be updated with my findings in detail when done!
 
-Here's a progress update on everything I've done so far and have planned, in a sequential order (Last updated 7/16/2025 at around 4:45 AM / 4:45 EST):
+Here's a progress update on everything I've done so far and have planned, in a sequential order (Last updated 7/23/2025 at around 1:50 AM / 1:50 EST):
 
 ✅ Initial bill of materials and concepts for testing on my end (Not shared until proven functional, safe and reliable)
 
 ✅ Hotend parts are in!
 
-⚠️ Test the hotend installation process (Already checked via mockups, only have to verify the reliability of the steel zip ties)
+⚠️ Test the hotend installation process
 
-^ Explaination: ***Don't use --> anything fiberous <-- like exhaust wrap to wrap your hotend in place of the silicone sock!!!!! Just leave it off if you can't source a safe alternative!!!!!*** For your printer's well being and your safety, please don't be like me and wrap your hotend in loose exhaust wrap without knowing that it sheds like a pet and unravels like a spool of filament without sides or tape. My entire printer was covered (Cleanable mostly yet not fully) and the working experience with it sucked, it irritates skin and lungs and potentially eyes if you get extra unlucky. Try to find a safer alternative like whatever I end up suggesting later in the final BOM, and if you cannot then it's better to go bare than fiberous, and I'm able to vouch for it. It even releases scary smoke when you first heat it, which is perfectly normal and dealable with the advanced filtration unit but is extremely scary if you had no idea that it did that, or saw smoke and panicked and turned off the printer before you remembered about it, like me.
+^ Explanation: ***Don't use --> anything fiberous <-- like exhaust wrap to wrap your hotend in place of the silicone sock!!!!! Just leave it off if you can't source a safe alternative!!!!!*** For your printer's well being and your safety, please don't be like me and wrap your hotend in loose exhaust wrap without knowing that it sheds like a pet and unravels like a spool of filament without sides or tape. My entire printer was covered (Cleanable mostly yet not fully) and the working experience with it sucked, it irritates skin and lungs and potentially eyes if you get extra unlucky. Try to find a safer alternative <ins>like whatever I end up suggesting later in the final BOM</ins>, and if you cannot then it's better to go bare than fiberous and take the big temp hit, and I'm able to vouch for it. It even releases magic smoke when you first heat it, which is perfectly normal and dealable with the advanced filtration unit but is extremely scary if you had no idea that it did that, or saw smoke and panicked and turned off the printer before you remembered about it, like me! **Everything else worked perfectly though, no issues there!**
 
-🟦 However: I'm currently testing it without any kind of wrap while I wait on sourcing a safe alternative. Everything worked, just had the above big issue!
+However: I'm currently testing it without any kind of wrap while I wait on sourcing a safe alternative. Everything worked, just had the above big issue!
+
+^ Update: The hotend, while stationary with the print fan off, cannot go above ~440c with a 65w heater cartridge without insulation. 🟦 Going to research good, suitable insulation methods now!
 
 ❌ Make sure the hotend can sustain 500c for at least an hour straight (Everything's rated for it)
 
-^ Explaination: In my case, with a 24v 65w heater cartridge, with the exhaust wrap on (Just don't, see above), the hotend capped around 480c before bottoming out and unable to go higher, until the printer seen this and shutoff, saying to check hotend thermistor and heater wiring for damage due to telling it to get hotter and it staying roughly the same temp.
+^ Explaination: In my case, with a 24v 65w heater cartridge, with the exhaust wrap on (Just don't, see above), the hotend capped around 480c before bottoming out and unable to go higher, until the printer seen this and shutoff, saying to check hotend thermistor and heater wiring for damage due to telling it to get hotter and it staying roughly the same temp. And as said above, without the exhaust wrap or any insulation at all, the same cartridge can only sustain ~440c. If anyone knows how Metacollin did 450c with their MK4 with a *stock* heater, please share!
 
-However: Accidental feature! If you use a 65w heater, you're unable to make it get hot enough to kill parts! If you *really really* want that 500c to work though, feel free to throw in a ~80-100w cartridge and experiment! And it was perfectly fine at 480 when it was there, just nice and **red hot and left permanently battle scarred!** All normal though! **And I'm fully confident in the parts surviving 500c constant temp if you simply upgrade the heater cartridge to allow it to be reached. I did not think this would be an issue!**
+However: It was perfectly fine at 480c when it was there, just nice and **red hot and left permanently battle scarred!** All normal though! **And I'm fully confident in the parts surviving 500c constant temp if you simply upgrade the heater cartridge or insulation to allow it to be reached. I did not think this would be an issue!** This will be removed entirely once the new hotend insulation arrives, below the next yellow box.
 
 ✅ Finish editing the firmware as needed (This will be repeated for awhile, too, until the whole thing's done)
 
-🟦 Finish the Arduino sketch (Ultimately working on, need a print for it to work)
+✅ Finish the Arduino sketch -- That took ages! Man I hate USB hosting. 5 days of 10+ hours straight of working on it and it's finally done, with everything non-USB taking a good 30 minutes total. Involves editing the USBHostGiga library and everything!
 
-🟦 Commit the changes here with the sketch
+🟦 Commit the changes here with the ***prototype*** sketch -- Doing now!
 
-🟦 Make the relevant 3D printed parts (Testing prototypes)
+🟦 Dry my Sunlu elitePETG that came extraordinarily waterlogged and find a different PETG source (Godawful extrusion, loud bubbling sounds while extruding), always fun!
 
-🟨 Wait on: Heated chamber parts to arrive (*NOT* Started yet. Will update here when that happens!)
+🟨 Wait on: Heated chamber parts and others to arrive (*NOT* Started yet. Will update here when that happens!)
 
-🟦 Test the chamber parts installation processes (Made lenient, just have to double check)
+🟦 Make sure the new hotend insulation allows at least 480c, preferably 500c, and verify reliability there
+
+🟦 Test the chamber parts installation processes (Made very lenient, just have to double check)
 
 🟦 Test reliability of the heating function, ensure nearby parts are unharmed from the hot steel panel (Let heat soak for like, an hour or two, with constant monitoring of motors and LCD)
 
 🟨 Wait on: Everything above to be done and verified
 
-🟦 1st Verification of functionality and reliability (Printing a 10h gcode file on dry mode (No filament that I'm able to source actually takes 500c) with a 470c hotend (Not getting a better heater to allow 500c, I prefer the safety of the inability of the 65w one to get past 480c when the nozzle's still without any fans blowing, but I'm confident in parts surviving 500c!), 120c bed and 55c chamber, will include the full temp graph of every probe on the machine throughout the entire thing alongside the used gcode, fully public)
+🟦 1st Verification of functionality and reliability (Printing a 10h gcode file on dry mode (No filament that I'm able to source actually takes 500c) with a 500c hotend (If the new insulation with a 65w cartridge allows, if not then the max temp with it), 120c bed and 55c chamber, will include the full temp graph of every probe on the machine throughout the entire thing alongside the used gcode, fully public)
 
-🟦 2nd Verification of functionality and reliability (Printing a mid-large (~5h) Siraya Tech PPA-CF Core print (320c nozzle, 90c bed, 55c chamber) with shared results exactly as the first verification has)
+🟦 2nd Verification of functionality and reliability (Printing a mid-large (~5h) Siraya Tech PPA-CF Core print (320c nozzle, 90c bed, 55c chamber) with shared results exactly as the first verification has, alongside pictures of the print)
 
 🟦 Make the Prusa-style assembly guides
 
@@ -65,7 +69,7 @@ However: Accidental feature! If you use a 65w heater, you're unable to make it g
 
 🟦 Finalize the Arduino sketch if not already
 
-❓ [PEEK Mods / PEEKSA](https://github.com/Rc8941/Prusa-Firmware-Buddy-HT-Core-One/tree/ht-c1?tab=readme-ov-file#xy-stepper-motor-coldboxes-a-bunchhhh-of-aluminum-parts-etc-to-allow-chamber-temps-beyond-55c-beyond-100c-peek) (I'd never try it in person myself so I'd make it and release the concepts anyways due to costs). I'd love to try and make them, but if I *do* then they'll come quite a while later, after everything else is finished at the earliest. It would have the same QOL (Assembly guides, etc.) as the rest, however! **This is not included in the estimated completion time found above**
+❓ [PEEK Mods](https://github.com/Rc8941/Prusa-Firmware-Buddy-HT-Core-One/tree/ht-c1?tab=readme-ov-file#xy-stepper-motor-coldboxes-a-bunchhhh-of-aluminum-parts-etc-to-allow-chamber-temps-beyond-55c-beyond-100c-peek) (I'd never try it in person myself so I'd make it and release the concepts anyways due to costs). I'd love to try and make them, but if I *do* then they'll come quite a while later, after everything else is finished at the earliest. It would have the same QOL (Assembly guides, etc.) as the rest, however! **This is not included in the estimated completion time found above**
 
 
 
