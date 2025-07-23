@@ -31,7 +31,7 @@
 // Fast response to temperature change
 // Working temperature -50�C -  +125�C
 // Calculated using 4.7kohm pullup, voltage divider math, and manufacturer provided temp/resistance
-const short temptable_2004[][2] PROGMEM = {
+const int32_t temptable_2004[][2] PROGMEM = {
 { OV(354), 125 },
 { OV(387), 120 },
 { OV(463), 110 },

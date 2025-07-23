@@ -172,7 +172,7 @@ void Chamber::reset() {
 #endif
 }
 
-#if PRINTER_IS_PRUSA_COREONE()
+#if PRINTER_IS_PRUSA_COREONE() // 45CMARKER
 void Chamber::check_vent_state() {
     const auto fil_target = config_store().get_filament_type(0).parameters().chamber_target_temperature;
     constexpr uint8_t temp_limit = 45; // Limit for closed grills is chamber max temperature of PETG

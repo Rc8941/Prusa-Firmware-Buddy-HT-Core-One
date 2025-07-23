@@ -21,12 +21,12 @@
  */
 #pragma once
 
-// R25 = 100 kOhm, beta25/85 = 4550K ± 3%, 4.7 kOhm pull-up
+// R25 = 100 kOhm, beta25/85 = 4550K ï¿½ 3%, 4.7 kOhm pull-up
 // 100k thermistor NTCG NTC Chip Thermistor (NTCG104LH104JTDS)
 // TDK Corporation Piezo & Protection Device B. Grp.
-// Working temperature -40°C -  +125°C
+// Working temperature -40ï¿½C -  +125ï¿½C
 // Calculated using 4.7kohm pullup, voltage divider math, and manufacturer provided temp/resistance
-const short temptable_2000[][2] PROGMEM = {
+const int32_t temptable_2000[][2] PROGMEM = {
 { OV(  0), 700 },
 { OV(312), 125 },
 { OV(346), 120 },

@@ -24,7 +24,7 @@
 #define REVERSE_TEMP_SENSOR_RANGE
 
 // PT100 with HX717 ADC convertor
-const short temptable_21[][2] PROGMEM = {
+const int32_t temptable_21[][2] PROGMEM = {
   { OV(10), 0},
   { OV(345), 124},
   { OV(995), 450}

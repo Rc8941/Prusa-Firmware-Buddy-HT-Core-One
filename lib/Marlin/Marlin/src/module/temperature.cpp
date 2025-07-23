@@ -242,10 +242,10 @@ Temperature thermalManager;
 #if HAS_TEMP_HEATBREAK
   heatbreak_info_t Temperature::temp_heatbreak[HOTENDS]; // = { 0 }
 
-  int16_t Temperature::mintemp_raw_HEATBREAK = HEATBREAK_RAW_LO_TEMP;
+  int32_t Temperature::mintemp_raw_HEATBREAK = HEATBREAK_RAW_LO_TEMP;
 
   #ifdef HEATBREAK_MAXTEMP
-    int16_t Temperature::maxtemp_raw_HEATBREAK = HEATBREAK_RAW_HI_TEMP;
+    int32_t Temperature::maxtemp_raw_HEATBREAK = HEATBREAK_RAW_HI_TEMP;
   #endif
 
   #if WATCH_HEATBREAK
@@ -258,10 +258,10 @@ Temperature thermalManager;
 #if HAS_TEMP_BOARD
   board_info_t Temperature::temp_board; // = { 0 }
 
-  int16_t Temperature::mintemp_raw_BOARD = BOARD_RAW_LO_TEMP;
+  int32_t Temperature::mintemp_raw_BOARD = BOARD_RAW_LO_TEMP;
 
   #ifdef BOARD_MAXTEMP
-    int16_t Temperature::maxtemp_raw_BOARD = BOARD_RAW_HI_TEMP;
+    int32_t Temperature::maxtemp_raw_BOARD = BOARD_RAW_HI_TEMP;
   #endif
 
 #endif
@@ -270,10 +270,10 @@ Temperature thermalManager;
   bed_info_t Temperature::temp_bed; // = { 0 }
   // Init min and max temp with extreme values to prevent false errors during startup
   #ifdef BED_MINTEMP
-    int16_t Temperature::mintemp_raw_BED = HEATER_BED_RAW_LO_TEMP;
+    int32_t Temperature::mintemp_raw_BED = HEATER_BED_RAW_LO_TEMP;
   #endif
   #ifdef BED_MAXTEMP
-    int16_t Temperature::maxtemp_raw_BED = HEATER_BED_RAW_HI_TEMP;
+    int32_t Temperature::maxtemp_raw_BED = HEATER_BED_RAW_HI_TEMP;
   #endif
   #if WATCH_BED
     heater_watch_t Temperature::watch_bed; // = { 0 }
@@ -290,10 +290,10 @@ Temperature thermalManager;
   chamber_info_t Temperature::temp_chamber; // = { 0 }
   #if HAS_HEATED_CHAMBER
     #ifdef CHAMBER_MINTEMP
-      int16_t Temperature::mintemp_raw_CHAMBER = HEATER_CHAMBER_RAW_LO_TEMP;
+      int32_t Temperature::mintemp_raw_CHAMBER = HEATER_CHAMBER_RAW_LO_TEMP;
     #endif
     #ifdef CHAMBER_MAXTEMP
-      int16_t Temperature::maxtemp_raw_CHAMBER = HEATER_CHAMBER_RAW_HI_TEMP;
+      int32_t Temperature::maxtemp_raw_CHAMBER = HEATER_CHAMBER_RAW_HI_TEMP;
     #endif
     #if WATCH_CHAMBER
       heater_watch_t Temperature::watch_chamber{0};
@@ -324,7 +324,7 @@ Temperature thermalManager;
 #endif
 
 #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
-  uint16_t Temperature::redundant_temperature_raw = 0;
+  uint32_t Temperature::redundant_temperature_raw = 0;
   float Temperature::redundant_temperature = 0.0;
 #endif
 
@@ -341,12 +341,12 @@ volatile bool Temperature::temp_meas_ready = false;
 
 #if HOTENDS
   // Init mintemp and maxtemp with extreme values to prevent false errors during startup
-  constexpr temp_range_t sensor_heater_0 { HEATER_0_RAW_LO_TEMP, HEATER_0_RAW_HI_TEMP, 0, 16383 },
-                         sensor_heater_1 { HEATER_1_RAW_LO_TEMP, HEATER_1_RAW_HI_TEMP, 0, 16383 },
-                         sensor_heater_2 { HEATER_2_RAW_LO_TEMP, HEATER_2_RAW_HI_TEMP, 0, 16383 },
-                         sensor_heater_3 { HEATER_3_RAW_LO_TEMP, HEATER_3_RAW_HI_TEMP, 0, 16383 },
-                         sensor_heater_4 { HEATER_4_RAW_LO_TEMP, HEATER_4_RAW_HI_TEMP, 0, 16383 },
-                         sensor_heater_5 { HEATER_5_RAW_LO_TEMP, HEATER_5_RAW_HI_TEMP, 0, 16383 };
+  constexpr temp_range_t sensor_heater_0 { HEATER_0_RAW_LO_TEMP, HEATER_0_RAW_HI_TEMP, 0, OSMPL(4096) },
+                         sensor_heater_1 { HEATER_1_RAW_LO_TEMP, HEATER_1_RAW_HI_TEMP, 0, OSMPL(4096) },
+                         sensor_heater_2 { HEATER_2_RAW_LO_TEMP, HEATER_2_RAW_HI_TEMP, 0, OSMPL(4096) },
+                         sensor_heater_3 { HEATER_3_RAW_LO_TEMP, HEATER_3_RAW_HI_TEMP, 0, OSMPL(4096) },
+                         sensor_heater_4 { HEATER_4_RAW_LO_TEMP, HEATER_4_RAW_HI_TEMP, 0, OSMPL(4096) },
+                         sensor_heater_5 { HEATER_5_RAW_LO_TEMP, HEATER_5_RAW_HI_TEMP, 0, OSMPL(4096) };
 
   temp_range_t Temperature::temp_range[HOTENDS] = ARRAY_BY_HOTENDS(sensor_heater_0, sensor_heater_1, sensor_heater_2, sensor_heater_3, sensor_heater_4, sensor_heater_5);
 #endif
@@ -1834,15 +1834,15 @@ void Temperature::suspend_heatbreak_fan(millis_t ms) {
   uint8_t l = 0, r = LEN, m;                                           \
   for (;;) {                                                           \
     m = (l + r) >> 1;                                                  \
-    if (!m) return short(pgm_read_word(&TBL[0][1]));                   \
-    if (m == l || m == r) return short(pgm_read_word(&TBL[LEN-1][1])); \
-    short v00 = pgm_read_word(&TBL[m-1][0]),                           \
+    if (!m) return int32_t(pgm_read_word(&TBL[0][1]));                   \
+    if (m == l || m == r) return int32_t(pgm_read_word(&TBL[LEN-1][1])); \
+    int32_t v00 = pgm_read_word(&TBL[m-1][0]),                           \
           v10 = pgm_read_word(&TBL[m-0][0]);                           \
          if (raw < v00) r = m;                                         \
     else if (raw > v10) l = m;                                         \
     else {                                                             \
-      const short v01 = short(pgm_read_word(&TBL[m-1][1])),            \
-                  v11 = short(pgm_read_word(&TBL[m-0][1]));            \
+      const int32_t v01 = int32_t(pgm_read_word(&TBL[m-1][1])),            \
+                  v11 = int32_t(pgm_read_word(&TBL[m-0][1]));            \
       return v01 + (raw - v00) * float(v11 - v01) / float(v10 - v00);  \
     }                                                                  \
   }                                                                    \
@@ -1989,7 +1989,7 @@ void Temperature::suspend_heatbreak_fan(millis_t ms) {
 #if HOTENDS
   // Derived from RepRap FiveD extruder::getTemperature()
   // For hot end temperature measurement.
-  float Temperature::analog_to_celsius_hotend(const int raw, const uint8_t e) {
+  float Temperature::analog_to_celsius_hotend(const int32_t raw, const uint8_t e) {
     #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
       if (e > HOTENDS)
     #else
@@ -2085,20 +2085,20 @@ void Temperature::suspend_heatbreak_fan(millis_t ms) {
 
     #if HOTEND_USES_THERMISTOR
       // Thermistor with conversion table?
-      const short(*tt)[][2] = (short(*)[][2])(heater_ttbl_map[e]);
+      const int32_t(*tt)[][2] = (int32_t(*)[][2])(heater_ttbl_map[e]);
       SCAN_THERMISTOR_TABLE((*tt), heater_ttbllen_map[e]);
     #endif
 
     return 0;
   }
 #endif // HOTENDS
-float scan_thermistor_table_bed(const int raw){
+float scan_thermistor_table_bed(const int32_t raw){
     SCAN_THERMISTOR_TABLE(BED_TEMPTABLE,BED_TEMPTABLE_LEN);
 }
 #if HAS_HEATED_BED
   // Derived from RepRap FiveD extruder::getTemperature()
   // For bed temperature measurement.
-  float Temperature::analog_to_celsius_bed(const int raw) {
+  float Temperature::analog_to_celsius_bed(const int32_t raw) {
     #if ENABLED(HEATER_BED_USER_THERMISTOR)
       return user_thermistor_to_deg_c(CTI_BED, raw);
     #elif ENABLED(HEATER_BED_USES_THERMISTOR)
@@ -2139,7 +2139,7 @@ float scan_thermistor_table_bed(const int raw){
 #if HAS_TEMP_CHAMBER
   // Derived from RepRap FiveD extruder::getTemperature()
   // For chamber temperature measurement.
-  float Temperature::analog_to_celsius_chamber(const int raw) {
+  float Temperature::analog_to_celsius_chamber(const int32_t raw) {
     #if ENABLED(HEATER_CHAMBER_USER_THERMISTOR)
       return user_thermistor_to_deg_c(CTI_CHAMBER, raw);
     #elif ENABLED(HEATER_CHAMBER_USES_THERMISTOR)
@@ -2157,7 +2157,7 @@ float scan_thermistor_table_bed(const int raw){
 #if HAS_TEMP_HEATBREAK
   // Derived from RepRap FiveD extruder::getTemperature()
   // For heatbreak temperature measurement.
-  float Temperature::analog_to_celsius_heatbreak(const int raw) {
+  float Temperature::analog_to_celsius_heatbreak(const int32_t raw) {
     #if ENABLED(HEATBREAK_USER_THERMISTOR)
       return user_thermistor_to_deg_c(CTI_HEATBREAK, raw);
     #elif ENABLED(HEATBREAK_USES_THERMISTOR)
@@ -2181,7 +2181,7 @@ float scan_thermistor_table_bed(const int raw){
 #if HAS_TEMP_BOARD
   // Derived from RepRap FiveD extruder::getTemperature()
   // For ambient temperature measurement.
-  float Temperature::analog_to_celsius_board(const int raw) {
+  float Temperature::analog_to_celsius_board(const int32_t raw) {
     #if ENABLED(BOARD_USER_THERMISTOR)
       return user_thermistor_to_deg_c(CTI_BOARD, raw);
     #elif ENABLED(BOARD_USES_THERMISTOR)
@@ -3130,7 +3130,7 @@ void Temperature::readings_ready() {
     for (uint8_t e = 0; e < COUNT(temp_dir); e++) {
       const int8_t tdir = temp_dir[e];
       if (tdir) {
-        [[maybe_unused]] const int16_t rawtemp = temp_hotend[e].raw * tdir; // normal direction, +rawtemp, else -rawtemp
+        [[maybe_unused]] const int32_t rawtemp = temp_hotend[e].raw * tdir; // normal direction, +rawtemp, else -rawtemp
         const bool heater_on = (temp_hotend[e].target > 0
           #if ENABLED(PIDTEMP)
             || temp_hotend[e].soft_pwm_amount > 0
@@ -3818,7 +3818,7 @@ void Temperature::isr() {
     #endif
     #if HAS_TEMP_CHAMBER
       print_heater_state(degChamber()
-        #if HAS_HEATED_CHAMBER
+        #if HAS_HEATED_CHAMBER // MARKER1
           , degTargetChamber()
         #else
           , 0
@@ -3858,19 +3858,34 @@ void Temperature::isr() {
         , (heater_ind_t)e
       );
     #endif
-    SERIAL_ECHOPAIR(" @:", getHeaterPower((heater_ind_t)target_extruder));
+    SERIAL_ECHOPAIR(" T@:", getHeaterPower((heater_ind_t)target_extruder)); // Send extruder power
     #if HAS_HEATED_BED
-      SERIAL_ECHOPAIR(" B@:", getHeaterPower(H_BED));
+      SERIAL_ECHOPAIR(" B@:", getHeaterPower(H_BED)); // Send bed power
     #endif
-    #if HAS_HEATED_CHAMBER
+    #if HAS_HEATED_CHAMBER // We do, but the printer doesn't know about it. Even if it did, it'd either report full power or none due to the relay. Use the serial monitor on the Arduino to get full data.
       SERIAL_ECHOPAIR(" C@:", getHeaterPower(H_CHAMBER));
-    #elif HAS_CHAMBER_API()
+    #elif HAS_CHAMBER_API() // Send chamber data
       auto current_chamber_temperature = buddy::chamber().current_temperature();
-      if (current_chamber_temperature.has_value()) SERIAL_ECHOPAIR(" C@:", current_chamber_temperature.value());
+      auto target_chamber_temperature = buddy::chamber().target_temperature();
+      if (current_chamber_temperature.has_value())
+      {
+        if(target_chamber_temperature.has_value()) // Both current and target exist
+        {
+          SERIAL_ECHOPAIR(" C:", current_chamber_temperature.value(), "/", target_chamber_temperature.value(), " "); // " C:{cur}/{targ} "
+        }
+        else // Only current exists (Target not set, will assume 0 / off in the Arduino code), the 0 is for easier parsing (Cur will never be less than ambient, way above 0, so the heater will never turn on).
+        {
+          SERIAL_ECHOPAIR(" C:", current_chamber_temperature.value(), "/0 "); // " C:{cur}/0 "
+        }
+      }
+      else // Neither exist, or only target exists (Wants to do nothing for safety anyways), still write C but as "NOVALUE" for informing the Arduino what's happening
+      {
+        SERIAL_ECHOPAIR(" C:NOVALUE ");
+      }
     #endif
 
     #if HAS_TEMP_HEATBREAK
-      SERIAL_ECHOPAIR(" HBR@:", getHeaterPower((heater_ind_t)(H_HEATBREAK_E0 + target_extruder)));
+      SERIAL_ECHOPAIR("HBR@:" /* Remove the preceding space here for Arduino formatting with C when HBR doesn't get sent */, getHeaterPower((heater_ind_t)(H_HEATBREAK_E0 + target_extruder)), "$");
     #endif
     #if HOTENDS > 1
       HOTEND_LOOP() {

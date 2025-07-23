@@ -193,7 +193,7 @@ enum AD1 {
 #endif
 } // namespace AdcChannel
 
-inline constexpr uint16_t raw_adc_value_at_50_degreas_celsius = 993;
+inline constexpr uint16_t raw_adc_value_at_50_degreas_celsius = 3972;
 
 template <ADC_HandleTypeDef &adc, size_t channels>
 class AdcDma {
@@ -204,9 +204,6 @@ public:
     // Sampling resolution
     static constexpr uint16_t sample_bits = 12;
     static constexpr uint16_t sample_max = (1 << sample_bits) - 1;
-
-    // Shift bits required to reduce from the full 12bit resolution to 10bit as expected by Marlin
-    static constexpr uint16_t shift_bits = 2;
 
     AdcDma()
         : m_data() {}
@@ -265,7 +262,7 @@ public:
 
     // Downscale from ADC full resolution as required by Marlin
     [[nodiscard]] uint16_t get_and_shift_channel(uint8_t index) const {
-        return get_channel(index) >> shift_bits;
+        return get_channel(index);
     }
 
 private:
@@ -393,7 +390,7 @@ public:
 
     // Downscale from ADC full resolution as required by Marlin
     [[nodiscard]] uint16_t get_and_shift_channel(uint8_t index) {
-        return get_channel(index) >> ADCDMA::shift_bits;
+        return get_channel(index);
     }
 
 private:
@@ -449,7 +446,7 @@ inline uint16_t nozzle() {
 
         // decimate to match the behavior of get_and_shift_channel()
         auto raw_temp_avg = nozzle_ring_buff.GetSum() / nozzle_ring_buff.GetSize();
-        return raw_temp_avg >> adcDma1.shift_bits;
+        return raw_temp_avg;
     }
 
     return raw_temp;

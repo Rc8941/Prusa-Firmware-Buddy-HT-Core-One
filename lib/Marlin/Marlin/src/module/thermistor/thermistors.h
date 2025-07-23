@@ -24,7 +24,12 @@
 #include "../../inc/MarlinConfig.h"
 
 #define OVERSAMPLENR 16
-#define OV(N) int16_t((N) * (OVERSAMPLENR))
+#define OV(N) (int32_t((4*N) * (OVERSAMPLENR)))
+#define OVPT(N) (int32_t((N) * (OVERSAMPLENR)))
+
+#define OSMPL(N) (int32_t((N) * (OVERSAMPLENR) - 1))
+
+#define MAXVAL 65535
 
 #define ANY_THERMISTOR_IS(n) (THERMISTOR_HEATER_0 == n || THERMISTOR_HEATER_1 == n || THERMISTOR_HEATER_2 == n || THERMISTOR_HEATER_3 == n || THERMISTOR_HEATER_4 == n || THERMISTOR_HEATER_5 == n || THERMISTORBED == n || THERMISTORCHAMBER == n || TEMP_SENSOR_HEATBREAK == n  || TEMP_SENSOR_BOARD == n)
 
@@ -35,8 +40,8 @@
 #define PtA 3.9083E-3
 #define PtB -5.775E-7
 #define PtRt(T,R0) ((R0) * (1.0 + (PtA) * (T) + (PtB) * (T) * (T)))
-#define PtAdVal(T,R0,Rup) (short)(1024 / (Rup / PtRt(T, R0) + 1))
-#define PtLine(T,R0,Rup) { OV(PtAdVal(T, R0, Rup)), T }
+#define PtAdVal(T,R0,Rup) (int32_t)(4096 / (Rup / PtRt(T, R0) + 1))
+#define PtLine(T,R0,Rup) { OVPT(PtAdVal(T, R0, Rup)), T }
 
 #if ANY_THERMISTOR_IS(1) // beta25 = 4092 K, R25 = 100 kOhm, Pull-up = 4.7 kOhm, "EPCOS"
   #include "thermistor_1.h"
@@ -174,7 +179,7 @@
   #include "thermistor_999.h"
 #endif
 #if ANY_THERMISTOR_IS(1000) // Custom
-  const short temptable_1000[][2] PROGMEM = { { 0, 0 } };
+  const int32_t temptable_1000[][2] PROGMEM = { { 0, 0 } };
 #endif
 
 #define _TT_NAME(_N) temptable_ ## _N
@@ -291,94 +296,94 @@ static_assert(
 // For thermocouples the highest temperature results in the highest ADC value
 #ifndef HEATER_0_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_0_USES_THERMISTOR)
-    #define HEATER_0_RAW_HI_TEMP 16383
+    #define HEATER_0_RAW_HI_TEMP MAXVAL
     #define HEATER_0_RAW_LO_TEMP 0
   #else
     #define HEATER_0_RAW_HI_TEMP 0
-    #define HEATER_0_RAW_LO_TEMP 16383
+    #define HEATER_0_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 #ifndef HEATER_1_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_1_USES_THERMISTOR)
-    #define HEATER_1_RAW_HI_TEMP 16383
+    #define HEATER_1_RAW_HI_TEMP MAXVAL
     #define HEATER_1_RAW_LO_TEMP 0
   #else
     #define HEATER_1_RAW_HI_TEMP 0
-    #define HEATER_1_RAW_LO_TEMP 16383
+    #define HEATER_1_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 #ifndef HEATER_2_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_2_USES_THERMISTOR)
-    #define HEATER_2_RAW_HI_TEMP 16383
+    #define HEATER_2_RAW_HI_TEMP MAXVAL
     #define HEATER_2_RAW_LO_TEMP 0
   #else
     #define HEATER_2_RAW_HI_TEMP 0
-    #define HEATER_2_RAW_LO_TEMP 16383
+    #define HEATER_2_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 #ifndef HEATER_3_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_3_USES_THERMISTOR)
-    #define HEATER_3_RAW_HI_TEMP 16383
+    #define HEATER_3_RAW_HI_TEMP MAXVAL
     #define HEATER_3_RAW_LO_TEMP 0
   #else
     #define HEATER_3_RAW_HI_TEMP 0
-    #define HEATER_3_RAW_LO_TEMP 16383
+    #define HEATER_3_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 #ifndef HEATER_4_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_4_USES_THERMISTOR)
-    #define HEATER_4_RAW_HI_TEMP 16383
+    #define HEATER_4_RAW_HI_TEMP MAXVAL
     #define HEATER_4_RAW_LO_TEMP 0
   #else
     #define HEATER_4_RAW_HI_TEMP 0
-    #define HEATER_4_RAW_LO_TEMP 16383
+    #define HEATER_4_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 #ifndef HEATER_5_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_5_USES_THERMISTOR)
-    #define HEATER_5_RAW_HI_TEMP 16383
+    #define HEATER_5_RAW_HI_TEMP MAXVAL
     #define HEATER_5_RAW_LO_TEMP 0
   #else
     #define HEATER_5_RAW_HI_TEMP 0
-    #define HEATER_5_RAW_LO_TEMP 16383
+    #define HEATER_5_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 #ifndef HEATER_BED_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_BED_USES_THERMISTOR)
-    #define HEATER_BED_RAW_HI_TEMP 16383
+    #define HEATER_BED_RAW_HI_TEMP MAXVAL
     #define HEATER_BED_RAW_LO_TEMP 0
   #else
     #define HEATER_BED_RAW_HI_TEMP 0
-    #define HEATER_BED_RAW_LO_TEMP 16383
+    #define HEATER_BED_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 #ifndef HEATER_CHAMBER_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATER_CHAMBER_USES_THERMISTOR)
-    #define HEATER_CHAMBER_RAW_HI_TEMP 16383
+    #define HEATER_CHAMBER_RAW_HI_TEMP MAXVAL
     #define HEATER_CHAMBER_RAW_LO_TEMP 0
   #else
     #define HEATER_CHAMBER_RAW_HI_TEMP 0
-    #define HEATER_CHAMBER_RAW_LO_TEMP 16383
+    #define HEATER_CHAMBER_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 
 #ifndef HEATBREAK_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(HEATBREAK_USES_THERMISTOR)
-    #define HEATBREAK_RAW_HI_TEMP 16383
+    #define HEATBREAK_RAW_HI_TEMP MAXVAL
     #define HEATBREAK_RAW_LO_TEMP 0
   #else
     #define HEATBREAK_RAW_HI_TEMP 0
-    #define HEATBREAK_RAW_LO_TEMP 16383
+    #define HEATBREAK_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 
 #ifndef BOARD_RAW_HI_TEMP
   #if defined(REVERSE_TEMP_SENSOR_RANGE) || !defined(BOARD_USES_THERMISTOR)
-    #define BOARD_RAW_HI_TEMP 16383
+    #define BOARD_RAW_HI_TEMP MAXVAL
     #define BOARD_RAW_LO_TEMP 0
   #else
     #define BOARD_RAW_HI_TEMP 0
-    #define BOARD_RAW_LO_TEMP 16383
+    #define BOARD_RAW_LO_TEMP MAXVAL
   #endif
 #endif
 

@@ -24,7 +24,7 @@
 #define REVERSE_TEMP_SENSOR_RANGE
 
 // PT100 with LMV358IDT preamp 3.3V MCU only
-const short temptable_22[][2] PROGMEM = {
+const int32_t temptable_22[][2] PROGMEM = {
   { OV(56), 0},
   { OV(983), 100}
 };

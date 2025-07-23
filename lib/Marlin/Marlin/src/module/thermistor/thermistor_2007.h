@@ -3,7 +3,7 @@
 // resistance at 25 deg. celsius: 100000
 // thermistor B value: 4267
 //
-const short temptable_2007[][2] PROGMEM = {
+const int32_t temptable_2007[][2] PROGMEM = {
     { OV(90), 320 }, // Projected value just to trigger error on short circuit
     { OV(120), 300 },
     { OV(155), 280 },

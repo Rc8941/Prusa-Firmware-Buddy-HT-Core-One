@@ -34,7 +34,7 @@
  * C: -2.03978e-07
  */
 #define NUMTEMPS 61
-const short temptable_666[NUMTEMPS][2] PROGMEM = {
+const int32_t temptable_666[NUMTEMPS][2] PROGMEM = {
   { OV(  1), 794 },
   { OV( 18), 288 },
   { OV( 35), 234 },
