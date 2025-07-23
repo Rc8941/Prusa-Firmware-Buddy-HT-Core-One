@@ -41,7 +41,9 @@ However: It was perfectly fine at 480c when it was there, just nice and **red ho
 
 ✅ Finish the Arduino sketch -- That took ages! Man I hate USB hosting. 5 days of 10+ hours straight of working on it and it's finally done, with everything non-USB taking a good 30 minutes total. Involves editing the USBHostGiga library and everything!
 
-🟦 Commit the changes here with the ***prototype*** sketch -- Doing now!
+✅ Commit the changes here 
+
+🟦 Commit the ***prototype*** sketch -- Doing tomorrow!
 
 🟦 Dry my Sunlu elitePETG that came extraordinarily waterlogged and find a different PETG source (Godawful extrusion, loud bubbling sounds while extruding), always fun!
 
