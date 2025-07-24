@@ -1,7 +1,7 @@
 # !!!!!!!!!! WIP, NOT DONE YET !!!!!!!!!! (Ignore the current firmware stuff, haven't committed my version and won't until I'm done editing it for Arduino stuff)
 The current status of the mod is as follows:
 
-Estimated completion time: ***August 2nd***. Do not take this as the final time, it may end up delayed. It's chosen quite leniently, but it primarily depends on how quick I can get the rest of my parts ordered and in.
+Estimated completion time: ***August 16th*** (Changed from August 2nd due to part sourcing issues). Do not take this as the final time, it may end up delayed even farther than it has been. It's chosen quite leniently, but it primarily depends on how quick I can get the rest of my parts ordered and in.
 
 ✅ = Finished!
 
