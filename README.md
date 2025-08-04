@@ -1,7 +1,7 @@
-# !!!!!!!!!! WIP, NOT DONE YET !!!!!!!!!! (Ignore the current firmware stuff, haven't committed my version and won't until I'm done editing it for Arduino stuff)
-The current status of the mod is as follows:
+# !!!!!!!!!! WIP, NOT DONE YET !!!!!!!!!!
+The current status of the mod is as follows (Last updated 8/4/2025 at around 7:50 PM / 19:50 EST):
 
-Estimated completion time: ***August 16th*** (Changed from August 2nd due to part sourcing issues). Do not take this as the final time, it may end up delayed even farther than it has been. It's chosen quite leniently, but it primarily depends on how quick I can get the rest of my parts ordered and in.
+Estimated completion time: **Undefined!** I'm having issues sourcing parts, which kind of puts this mod on a stall. However, in the meantime I've finished nearly everything needed, like designs and part lists, just have to source parts, print parts, test assembly and write the assembly guides along the way! I feel listing this as undefined instead of setting the date way back will be more truthful to everyone, so that far date doesn't end up needing to be even farther or ends up coming any closer than guesstimated!
 
 ✅ = Finished!
 
@@ -17,11 +17,11 @@ Estimated completion time: ***August 16th*** (Changed from August 2nd due to par
 
 For context: Everything like "Check (something)" will be updated with my findings in detail when done!
 
-Here's a progress update on everything I've done so far and have planned, in a sequential order (Last updated 7/23/2025 at around 1:50 AM / 1:50 EST):
+Here's a progress update on everything I've done so far and have planned, in a sequential order:
 
 ✅ Initial bill of materials and concepts for testing on my end (Not shared until proven functional, safe and reliable)
 
-✅ Hotend parts are in!
+✅ Initial hotend parts are in!
 
 ⚠️ Test the hotend installation process
 
@@ -29,39 +29,43 @@ Here's a progress update on everything I've done so far and have planned, in a s
 
 However: I'm currently testing it without any kind of wrap while I wait on sourcing a safe alternative. Everything worked, just had the above big issue!
 
-^ Update: The hotend, while stationary with the print fan off, cannot go above ~440c with a 65w heater cartridge without insulation. 🟦 Going to research good, suitable insulation methods now!
+^ Update: The hotend, while stationary with the print fan off, cannot go above ~440c with a 65w heater cartridge without insulation.
 
 ❌ Make sure the hotend can sustain 500c for at least an hour straight (Everything's rated for it)
 
 ^ Explaination: In my case, with a 24v 65w heater cartridge, with the exhaust wrap on (Just don't, see above), the hotend capped around 480c before bottoming out and unable to go higher, until the printer seen this and shutoff, saying to check hotend thermistor and heater wiring for damage due to telling it to get hotter and it staying roughly the same temp. And as said above, without the exhaust wrap or any insulation at all, the same cartridge can only sustain ~440c. If anyone knows how Metacollin did 450c with their MK4 with a *stock* heater, please share!
 
-However: It was perfectly fine at 480c when it was there, just nice and **red hot and left permanently battle scarred!** All normal though! **And I'm fully confident in the parts surviving 500c constant temp if you simply upgrade the heater cartridge or insulation to allow it to be reached. I did not think this would be an issue!** This will be removed entirely once the new hotend insulation arrives, below the next yellow box.
+However: It was perfectly fine at 480c when it was there, just nice and **red hot and left permanently battle scarred!** All normal though! **And I'm fully confident in the parts surviving 500c constant temp if you simply upgrade the heater cartridge/setup to allow it to be reached. I did not think this would be an issue!** This will be removed entirely once the new hotend solution arrives, below the next yellow box.
 
 ✅ Finish editing the firmware as needed (This will be repeated for awhile, too, until the whole thing's done)
 
-✅ Finish the Arduino sketch -- That took ages! Man I hate USB hosting. 5 days of 10+ hours straight of working on it and it's finally done, with everything non-USB taking a good 30 minutes total. Involves editing the USBHostGiga library and everything!
+✅ Finish the core of the Arduino sketch -- That took ages! Man I hate USB hosting. 5 days of 10+ hours straight of working on it and it's finally done, with everything non-USB taking a good 30 minutes total. Involves editing the USBHostGiga library and everything!
 
-✅ Commit the changes here 
+✅ Commit the firmware changes here
 
-🟦 Commit the ***prototype*** sketch -- Doing tomorrow!
+🟦 Commit the ***prototype*** Arduino sketch here
 
-🟦 Dry my Sunlu elitePETG that came extraordinarily waterlogged and find a different PETG source (Godawful extrusion, loud bubbling sounds while extruding), always fun!
+🟨 Wait on: New, dual-heater heaterblock to arrive, alongside a bunch of other parts (*NOT* Started yet. Will update here when that happens!)
 
-🟨 Wait on: Heated chamber parts and others to arrive (*NOT* Started yet. Will update here when that happens!)
+🟦 Test the 500c reachability of the new block
 
-🟦 Make sure the new hotend insulation allows at least 480c, preferably 500c, and verify reliability there
+🟦 Test temp stability
 
-🟦 Test the chamber parts installation processes (Made very lenient, just have to double check)
+🟦 Tune PID by hand if autotune shows no success (Barely worked at 65c)
 
-🟦 Test reliability of the heating function, ensure nearby parts are unharmed from the hot steel panel (Let heat soak for like, an hour or two, with constant monitoring of motors and LCD)
+🟨 Wait on: All other parts to arrive
+
+🟦 Test the installation processes (Made very lenient, just have to double check)
+
+🟦 Test reliability of the chamber heating function, ensure nearby parts are unharmed from the hot steel panel (Let heat soak for like, an hour or two, with constant monitoring of motors and LCD)
+
+🟦 Make the Prusa-style assembly guides along the way
 
 🟨 Wait on: Everything above to be done and verified
 
 🟦 1st Verification of functionality and reliability (Printing a 10h gcode file on dry mode (No filament that I'm able to source actually takes 500c) with a 500c hotend (If the new insulation with a 65w cartridge allows, if not then the max temp with it), 120c bed and 55c chamber, will include the full temp graph of every probe on the machine throughout the entire thing alongside the used gcode, fully public)
 
 🟦 2nd Verification of functionality and reliability (Printing a mid-large (~5h) Siraya Tech PPA-CF Core print (320c nozzle, 90c bed, 55c chamber) with shared results exactly as the first verification has, alongside pictures of the print)
-
-🟦 Make the Prusa-style assembly guides
 
 🟦 Make the finalized bill of materials (For publishing)
 
@@ -71,20 +75,20 @@ However: It was perfectly fine at 480c when it was there, just nice and **red ho
 
 🟦 Finalize the Arduino sketch if not already
 
-❓ [PEEK Mods](https://github.com/Rc8941/Prusa-Firmware-Buddy-HT-Core-One/tree/ht-c1?tab=readme-ov-file#xy-stepper-motor-coldboxes-a-bunchhhh-of-aluminum-parts-etc-to-allow-chamber-temps-beyond-55c-beyond-100c-peek) (I'd never try it in person myself so I'd make it and release the concepts anyways due to costs). I'd love to try and make them, but if I *do* then they'll come quite a while later, after everything else is finished at the earliest. It would have the same QOL (Assembly guides, etc.) as the rest, however! **This is not included in the estimated completion time found above**
+❓ [PEEK Mods](https://github.com/Rc8941/Prusa-Firmware-Buddy-HT-Core-One/tree/ht-c1?tab=readme-ov-file#xy-stepper-motor-coldboxes-a-bunchhhh-of-aluminum-parts-etc-to-allow-chamber-temps-beyond-55c-beyond-100c-peek) (I'd never try it in person myself so I'd make it and release the concepts anyways due to costs). I'd love to try and make them, but if I *do* then they'll come quite a while later, after everything else is finished at the earliest. It would have the same QOL (Assembly guides, etc.) as the rest, however! **This is not included in the estimated completion time found above, which is undefined for now anyways**
 
 
 
 
 # Core One HT (500c) Mod
 Are you interested in giving your Prusa Core One some or all of the following?:
-1. A hotend capable of sustaining 450c for safety, and 500c with a different heater?
+1. A hotend capable of sustaining 500c with dual heaters?
 2. A chamber that's thermally insulated for extra temp stability?
 3. A chamber with... TRUE ACTIVE HEATING?? No more 40-45c chamber temps throughout a print with a target of 55c (Bed 90c)! Only 55c here!
 4. Thanks to [metacollin](https://github.com/metacollin) and their [MK4/S 450c Mod](https://github.com/metacollin/Prusa-Firmware-Buddy/tree/mc_high_temp), full use of the Loveboard's 12-bit ADC to get ~0.2c resolution on a PT1000?
-5. An... upgraded (480w, 2x stock) power supply?? To run DUAL PSUs?? (Context later, they power seperate things)
+5. An... upgraded (600w, 2.5x stock) power supply?? To run DUAL PSUs?? (Context later, they power seperate things)
 6. ...A somewhat corny with likely invalid logic, Prusa-themed keychain for your printer that says "Originally an ORIGINAL PRUSA" printed in the blingiest, highest temp filament you can get your hands on?
-7. So, so much more...
+7. So, so much more!
 
 ALL with detailed assembly guides inspired by Prusa's own guides?
 
@@ -93,7 +97,7 @@ You're in the right place!
 # Before you begin (Words of warning):
 
 ## This mod is based around the Core One, nothing else!
-Other Buddy printers are technically able to be flashed with this, but will see no temp benefit. Other parts of the firmware are edited to fit the Core One in particular, if you flash this to, for example, a MK4, unexpected and/or unwanted issues may occur. I fully recommend checking out [metacollin's MK4/S High Temp firmware](https://github.com/metacollin/Prusa-Firmware-Buddy/tree/mc_high_temp) if you want the 12-bit ADC mod anyways (Only for Nextruder printers / printers with the Loveboard, don't know about the XL for example), as 1. they made it work (Go give them some love!), and 2. they actually know what they're doing digging deep into the firmware (And Marlin) like they've done, and tweak far less things than what is tweaked in this mod, so their version would be more stable for your use case.
+Other xBuddy printers are technically able to be flashed with this, but will see no temp benefit. Other parts of the firmware are edited to fit the Core One in particular, if you flash this to, for example, a MK4, unexpected and/or unwanted issues may occur. I fully recommend checking out [metacollin's MK4/S High Temp firmware](https://github.com/metacollin/Prusa-Firmware-Buddy/tree/mc_high_temp) if you want the 12-bit ADC mod anyways (Only for Nextruder printers / printers with the Loveboard, don't know about the XL for example), as 1. they made it work (Go give them some love!), and 2. they actually know what they're doing digging deep into the firmware (And Marlin) like they've done, and tweak far less things than what is tweaked in this mod, so their version would be more stable for your use case.
 
 ## This mod, on the hardware side, is rather big (In scope).
 This isn't meant to be a small upgrade to allow it to work at these temps, it's a full on overhaul to the 1. Nextruder hotend assembly and 2. the chamber itself. 
